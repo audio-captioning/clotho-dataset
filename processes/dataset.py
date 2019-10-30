@@ -4,6 +4,9 @@
 from pathlib import Path
 from itertools import chain
 from collections import Counter
+from functools import partial
+
+import numpy as np
 
 from tools import csv_functions, captions_functions, file_io
 
@@ -42,8 +45,81 @@ def _get_annotations_files(settings_ann, dir_ann):
     return csv_development, csv_evaluation
 
 
-def _create_split_data(dir_split, dir_root, csv_split, settings_cntr):
-    pass
+def _create_split_data(dir_split, dir_audio, dir_root, csv_split, words_list,
+                       chars_list, settings_ann, settings_audio, settings_output):
+    """
+
+    :param dir_split:
+    :type dir_split: pathlib.Path
+    :param dir_audio:
+    :type dir_audio: pathlib.Path
+    :param dir_root:
+    :type dir_root: pathlib.Path
+    :param csv_split:
+    :type csv_split: list[collections.OrderedDict]
+    :param words_list:
+    :type words_list: list[str]
+    :param chars_list:
+    :type chars_list: list[str]
+    :param settings_ann:
+    :type settings_ann: dict
+    :param settings_audio:
+    :type settings_audio: dict
+    :param settings_output:
+    :type settings_output: dict
+    :return:
+    :rtype:
+    """
+    # For each sound:
+    for csv_entry in csv_split:
+        file_name_audio = csv_entry[settings_ann['audio_file_column']]
+
+        audio = file_io.load_audio_file(
+            audio_file=dir_root.joinpath(dir_audio).joinpath(file_name_audio),
+            sr=int(settings_audio['sr']), mono=settings_audio['to_mono'])
+
+        captions_fields = [settings_ann['captions_fields_prefix'].format(i)
+                           for i in range(1, int(settings_ann['nb_captions']) + 1)]
+
+        for caption_ind, caption_field in enumerate(captions_fields):
+            caption = csv_entry[caption_field]
+
+            words_caption = captions_functions.get_sentence_words(
+                caption, unique=settings_ann['use_unique_words_per_caption'],
+                keep_case=settings_ann['keep_case'],
+                remove_punctuation=settings_ann['keep_punctuation']
+            )
+
+            chars_caption = list(chain.from_iterable(
+                captions_functions.clean_sentence(
+                    caption,
+                    keep_case=settings_ann['keep_case'],
+                    remove_punctuation=settings_ann['remove_punctuation'],
+                    remove_specials=True)))
+
+            indices_words = [words_list.index(word) for word in words_caption]
+            indices_chars = [chars_list.index(char) for char in chars_caption]
+
+            #   create the numpy object with all elements
+            np_rec_array = np.rec.array(np.array(
+                (file_name_audio, audio, caption, caption_ind,
+                 np.array(indices_words), np.array(indices_chars)),
+                dtype=[
+                    ('file_name', 'U{}'.format(len(file_name_audio))),
+                    ('audio_data', np.dtype(object)),
+                    ('caption', 'U{}'.format(len(caption))),
+                    ('caption_ind', 'i4'),
+                    ('words_ind', np.dtype(object)),
+                    ('chars_ind', np.dtype(object))
+                ]
+            ))
+
+            #   save the numpy object to disk
+            file_io.dump_numpy_object(
+                np_obj=np_rec_array,
+                file_name=dir_root.joinpath(dir_split).joinpath(
+                    settings_output['file_name_template'].format(
+                        audio_file_name=file_name_audio, caption_index=caption_ind)))
 
 
 def _create_lists_and_frequencies(captions, dir_root, settings_ann, settings_cntr):
@@ -57,6 +133,8 @@ def _create_lists_and_frequencies(captions, dir_root, settings_ann, settings_cnt
     :type settings_ann: dict
     :param settings_cntr: Settings for pickle files.
     :type settings_cntr: dict
+    :return: Words and characters list.
+    :rtype: list[str], list[str]
     """
     # Get words counter
     counter_words = captions_functions.get_words_counter(
@@ -70,7 +148,13 @@ def _create_lists_and_frequencies(captions, dir_root, settings_ann, settings_cnt
     words_list, frequencies_words = list(counter_words.keys()), list(counter_words.values())
 
     # Get characters and frequencies
-    counter_characters = Counter(list(chain.from_iterable([list(word) for word in words_list])))
+    cleaned_captions = [captions_functions.clean_sentence(
+        sentence, keep_case=settings_ann['keep_case'],
+        remove_punctuation=settings_ann['remove_punctuation'],
+        remove_specials=True) for sentence in captions]
+
+    characters_all = list(chain.from_iterable(cleaned_captions))
+    counter_characters = Counter(characters_all)
     chars_list, frequencies_chars = list(counter_characters.keys()), list(counter_characters.values())
 
     # Save to disk
@@ -84,6 +168,8 @@ def _create_lists_and_frequencies(captions, dir_root, settings_ann, settings_cnt
 
     [file_io.dump_pickle_file(obj=obj, file_name=dir_root.joinpath(obj_f_name))
      for obj, obj_f_name in zip(obj_list, obj_f_names)]
+
+    return words_list, chars_list
 
 
 def create_dataset(settings):
@@ -108,22 +194,26 @@ def create_dataset(settings):
                             for csv_field in csv_development
                             for c_ind in range(1, 6)]
 
-    _create_lists_and_frequencies(
+    words_list, chars_list = _create_lists_and_frequencies(
         captions=captions_development, dir_root=dir_root,
         settings_ann=settings['annotations'],
         settings_cntr=settings['counter'])
 
-    print('OK')
+    dir_split_dev = dir_root.joinpath(settings['directories']['development_dir'])
+    dir_split_eva = dir_root.joinpath(settings['directories']['evaluation_dir'])
 
-    # Make the paths for all sounds
+    split_func = partial(
+        _create_split_data, dir_split=dir_split_dev,
+        dir_audio=settings['directories']['audio_dir'],
+        dir_root=dir_root, csv_split=csv_development,
+        words_list=words_list, chars_list=chars_list,
+        settings_ann=settings['annotations'],
+        settings_audio=settings['audio'],
+        settings_output=settings['output_files']
+    )
 
-    # For each sound:
-    #   read it
-    #   extract features
-    #   create the numpy object with all
-    #     elements
-    #   save the numpy object to disk
-    pass
+    split_func(dir_split_dev)
+    split_func(dir_split_eva)
 
 
 def main():
