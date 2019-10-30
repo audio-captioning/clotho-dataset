@@ -1,0 +1,52 @@
+# Feature extraction process settings.
+# ===================================
+data:
+  root_dir: 'data'
+  audio_dir: 'audio'
+  annotations_files:
+    training: 'final_captions_train.csv'
+    validation: 'final_captions_val.csv'
+    testing: 'final_captions_test.csv'
+# -----------------------------------
+features:
+  file_name: 'clotho_file_${audio_file_name}_${caption_index}.npy'
+  output_dir: 'clotho'
+  input_features:
+    - 'stft'
+    - 'mel_band_energies'
+  target_values:
+    - 'words_indices'
+    - 'chars_indices'
+# -----------------------------------
+audio:
+  sr: 44100
+  to_mono: Yes
+  max_abs_value: 1.
+# -----------------------------------
+stft:
+  nb_fft: 1024
+  hop_factor: .5
+  window_function: 'hamming'
+  center: Yes
+# -----------------------------------
+mel_band_energies:
+  nb_mels: 64
+  f_min: .0
+  f_max:
+  htk: No
+  power: 1.
+  norm: 1
+# -----------------------------------
+annotations:
+  audio_file_column: 'file_name'
+  captions_fields_prefix: 'caption_'
+  nb_captions: 5
+  keep_case: No
+  keep_punctuation: No
+# -----------------------------------
+counters:
+  words_list_file_name: 'words_list.p'
+  words_counter_file_name: 'words_frequencies.p'
+  characters_list_file_name: 'characters_list.p'
+  characters_frequencies_file_name: 'characters_frequencies.p'
+# EOF
