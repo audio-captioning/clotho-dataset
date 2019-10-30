@@ -10,7 +10,7 @@ from tools import csv_functions
 
 __author__ = 'Konstantinos Drossos, Samuel Lipping -- Tampere University'
 __docformat__ = 'reStructuredText'
-__all__ = ['get_words_counter']
+__all__ = ['get_words_counter', 'clean_sentence']
 
 
 def get_sentence_words(sentence, unique=False, keep_case=False,
@@ -29,17 +29,41 @@ def get_sentence_words(sentence, unique=False, keep_case=False,
     :return: Sentence words
     :rtype: list[str]
     """
-    the_sentence = sentence if keep_case else sentence.lower()
-
-    if remove_punctuation:
-        the_sentence = re.sub('[,.!?;:\"]', ' ', the_sentence)
-
-    words = the_sentence.strip().split()
+    words = clean_sentence(
+        sentence, keep_case=keep_case,
+        remove_punctuation=remove_punctuation).strip().split()
 
     if unique:
         words = list(set(words))
 
     return words
+
+
+def clean_sentence(sentence, keep_case=False, remove_punctuation=True, remove_specials=True):
+    """Cleans a sentence.
+
+    :param sentence: Sentence to be clean.
+    :type sentence: str
+    :param keep_case: Keep capitals and small (True) or turn\
+                      everything to small case (False)
+    :type keep_case: bool
+    :param remove_punctuation: Remove punctuation from sentence?
+    :type remove_punctuation: bool
+    :param remove_specials: Remove special tokens?
+    :type remove_specials: bool
+    :return: Cleaned sentence.
+    :rtype: str
+    """
+    the_sentence = sentence if keep_case else sentence.lower()
+
+    if remove_specials:
+        the_sentence = the_sentence.replace('<SOS> ', '')
+        the_sentence = the_sentence.replace(' <EOS>', '')
+
+    if remove_punctuation:
+        the_sentence = re.sub('[,.!?;:\"]', ' ', the_sentence)
+
+    return the_sentence
 
 
 def get_sentence_length(sentence):
@@ -118,27 +142,6 @@ def group_csv_and_get_words_counter(csv_contents, split_by, captions_fields,
     ) for i in range(1, len(dict_k))]
 
     return words_counter
-
-
-def get_captions_and_scores_of_sounds(csv_contents):
-    """Retrieves all captions and associated scores of all sounds.
-
-    :param csv_contents: The contents of the CSV.
-    :type csv_contents: list[collections.OrderedDict]
-    :return: The sound, its captions, and the associated scores.
-             Keys of the dict are:
-                 - sound_name --> str
-                 - captions --> list[str]
-                 - score_accuracy --> list[int]
-                 - score_fluency --> list[int]
-    :rtype: list[dict]
-    """
-    captions = defaultdict(list)
-    score_accuracy = defaultdict(list)
-    score_fluency = defaultdict(list)
-
-    for entry in csv_contents:
-        captions[entry['filename']].append()
 
 
 def get_all_captions(csv_contents, captions_fields):
