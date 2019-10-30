@@ -2,13 +2,24 @@
 #
 # author: Konstantinos Drossos - -Tampere University
 # ===================================
-data:
+directories:
   root_dir: 'data'
   audio_dir: 'audio'
-  annotations_files:
-    training: 'final_captions_train.csv'
-    validation: 'final_captions_val.csv'
-    testing: 'final_captions_test.csv'
+  annotations_dir: ''
+  development_dir: 'development'
+  evaluation_dir: 'evaluation'
+# -----------------------------------
+annotations:
+  development_file: 'clotho_captions_development.csv'
+  evaluation_file: 'clotho_captions_evaluation.csv'
+  audio_file_column: 'file_name{}'
+  captions_fields_prefix: 'caption_{}'
+  use_special_tokens: Yes
+  nb_captions: 5
+  keep_case: No
+  keep_punctuation: No
+  use_unique_words_per_caption: No
+  use_unique_chars_per_caption: No
 # -----------------------------------
 features:
   file_name: 'clotho_file_${audio_file_name}_${caption_index}.npy'
@@ -38,13 +49,6 @@ mel_band_energies:
   htk: No
   power: 1.
   norm: 1
-# -----------------------------------
-annotations:
-  audio_file_column: 'file_name'
-  captions_fields_prefix: 'caption_'
-  nb_captions: 5
-  keep_case: No
-  keep_punctuation: No
 # -----------------------------------
 counters:
   words_list_file_name: 'words_list.p'
