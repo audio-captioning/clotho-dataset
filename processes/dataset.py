@@ -7,10 +7,11 @@ from collections import Counter
 from functools import partial
 
 import numpy as np
+from loguru import logger
 
 from tools import csv_functions, captions_functions, file_io
 
-__author__ = 'Konstantinos Drossos'
+__author__ = 'Konstantinos Drossos -- Tampere University'
 __docformat__ = 'reStructuredText'
 __all__ = ['create_dataset']
 
@@ -181,23 +182,32 @@ def create_dataset(settings):
     :param settings: Settings to be used.
     :type settings: dict
     """
+    # Get logger
+    inner_logger = logger.bind(indent=2)
+
     # Get root dir
     dir_root = Path(settings['directories']['root_dir'])
 
     # Read the annotation files
+    inner_logger.info('Reading annotations files.')
     csv_development, csv_evaluation = _get_annotations_files(
         settings_ann=settings['annotations'],
         dir_ann=dir_root.joinpath(settings['directories']['annotations_dir']))
+    inner_logger.info('Done.')
 
     # Get all captions
+    inner_logger.info('Getting the captions.')
     captions_development = [csv_field.get('caption_{}'.format(c_ind))
                             for csv_field in csv_development
                             for c_ind in range(1, 6)]
+    inner_logger.info('Done.')
 
+    inner_logger.info('Creating and saving words and chars lists and frequencies.')
     words_list, chars_list = _create_lists_and_frequencies(
         captions=captions_development, dir_root=dir_root,
         settings_ann=settings['annotations'],
         settings_cntr=settings['counter'])
+    inner_logger.info('Done.')
 
     dir_split_dev = dir_root.joinpath(settings['directories']['development_dir'])
     dir_split_eva = dir_root.joinpath(settings['directories']['evaluation_dir'])
@@ -212,8 +222,12 @@ def create_dataset(settings):
         settings_output=settings['output_files']
     )
 
+    inner_logger.info('Creating the development split data.')
     split_func(dir_split_dev)
+    inner_logger.info('Done.')
+    inner_logger.info('Creating the evaluation split data.')
     split_func(dir_split_eva)
+    inner_logger.info('Done.')
 
 
 def main():
