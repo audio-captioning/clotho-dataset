@@ -12,7 +12,7 @@ import numpy as np
 from loguru import logger
 
 from tools.argument_parsing import get_argument_parser
-from tools.aux_functions import get_annotations_files, check_amount_of_files
+from tools.aux_functions import get_annotations_files, check_amount_of_files, check_data_for_split
 from tools.file_io import load_audio_file, dump_numpy_object, dump_pickle_file, \
     load_settings_file
 from tools.captions_functions import get_sentence_words, clean_sentence, \
@@ -250,6 +250,9 @@ def create_dataset(settings):
         nb_files_data))
     inner_logger.info('Amount of evaluation data files per audio: {}'.format(
         nb_files_data/nb_files_audio))
+
+    inner_logger.info('Checking the development split.')
+
 
 
 def main():

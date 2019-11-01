@@ -11,7 +11,7 @@ from tools.file_io import load_numpy_object, load_audio_file, load_pickle_file
 
 __author__ = 'Konstantinos Drossos'
 __docformat__ = 'reStructuredText'
-__all__ = ['check_amount_of_files', 'get_annotations_files']
+__all__ = ['check_amount_of_files', 'get_annotations_files', 'check_data_for_split']
 
 
 def check_amount_of_files(dir_audio, dir_data):
