@@ -10,11 +10,11 @@ from tools import csv_functions
 
 __author__ = 'Konstantinos Drossos, Samuel Lipping -- Tampere University'
 __docformat__ = 'reStructuredText'
-__all__ = ['get_words_counter', 'clean_sentence']
+__all__ = ['get_words_counter', 'clean_sentence', 'get_sentence_words']
 
 
 def get_sentence_words(sentence, unique=False, keep_case=False,
-                       remove_punctuation=True):
+                       remove_punctuation=True, remove_specials=True):
     """Splits input sentence into words.
     
     :param sentence: Sentence to split
@@ -26,12 +26,15 @@ def get_sentence_words(sentence, unique=False, keep_case=False,
     :type keep_case: bool
     :param remove_punctuation: Remove punctuation from sentence?
     :type remove_punctuation: bool
+    :param remove_specials: Remove special tokens?
+    :type remove_specials: bool
     :return: Sentence words
     :rtype: list[str]
     """
     words = clean_sentence(
         sentence, keep_case=keep_case,
-        remove_punctuation=remove_punctuation).strip().split()
+        remove_punctuation=remove_punctuation,
+        remove_specials=remove_specials).strip().split()
 
     if unique:
         words = list(set(words))
@@ -57,8 +60,8 @@ def clean_sentence(sentence, keep_case=False, remove_punctuation=True, remove_sp
     the_sentence = sentence if keep_case else sentence.lower()
 
     if remove_specials:
-        the_sentence = the_sentence.replace('<SOS> ', '')
-        the_sentence = the_sentence.replace(' <EOS>', '')
+        the_sentence = the_sentence.replace('<SOS> ', '').replace('<sos> ', '')
+        the_sentence = the_sentence.replace(' <EOS>', '').replace(' <eos>', '')
 
     if remove_punctuation:
         the_sentence = re.sub('[,.!?;:\"]', ' ', the_sentence)
@@ -77,7 +80,8 @@ def get_sentence_length(sentence):
     return len(get_sentence_words(sentence))
 
 
-def get_words_counter(captions, use_unique=False, keep_case=False, remove_punctuation=True):
+def get_words_counter(captions, use_unique=False, keep_case=False,
+                      remove_punctuation=True, remove_specials=True):
     """Creates a Counter object from the\
     words in the captions.
 
@@ -90,6 +94,8 @@ def get_words_counter(captions, use_unique=False, keep_case=False, remove_punctu
     :type keep_case: bool
     :param remove_punctuation: Remove punctuation from captions?
     :type remove_punctuation: bool
+    :param remove_specials: Remove special tokens?
+    :type remove_specials: bool
     :return: Counter object from\
              the words in the captions.
     :rtype: collections.Counter
@@ -97,7 +103,8 @@ def get_words_counter(captions, use_unique=False, keep_case=False, remove_punctu
     partial_func = partial(
         get_sentence_words,
         unique=use_unique, keep_case=keep_case,
-        remove_punctuation=remove_punctuation
+        remove_punctuation=remove_punctuation,
+        remove_specials=remove_specials
     )
     return Counter(chain.from_iterable(map(partial_func, captions)))
 

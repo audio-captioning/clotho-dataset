@@ -4,25 +4,27 @@
 # ===================================
 directories:
   root_dir: 'data'
-  audio_dir: 'audio'
   annotations_dir: ''
-  development_dir: 'development'
-  evaluation_dir: 'evaluation'
+  downloaded_audio_dir: 'downloaded_audio'
+  downloaded_audio_development: 'development'
+  downloaded_audio_evaluation: 'evaluation'
 # -----------------------------------
 annotations:
   development_file: 'clotho_captions_development.csv'
   evaluation_file: 'clotho_captions_evaluation.csv'
-  audio_file_column: 'file_name{}'
+  audio_file_column: 'file_name'
   captions_fields_prefix: 'caption_{}'
   use_special_tokens: Yes
   nb_captions: 5
   keep_case: No
-  remove_punctuation: Yes
-  use_unique_words_per_caption: No
-  use_unique_chars_per_caption: No
+  remove_punctuation_words: Yes
+  remove_punctuation_chars: No
 # -----------------------------------
 output_files:
-  file_name_template: 'clotho_file_${audio_file_name}_${caption_index}.npy'
+  dir_output: ''
+  dir_data_development: 'development'
+  dir_data_evaluation: 'evaluation'
+  file_name_template: 'clotho_file_{audio_file_name}_{caption_index}.npy'
 features:
   file_name: 'clotho_file_${audio_file_name}_${caption_index}.npy'
   input_features:
