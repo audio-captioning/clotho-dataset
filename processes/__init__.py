@@ -6,14 +6,6 @@ from processes.features import extract_features
 
 __author__ = 'Konstantinos Drossos -- Tampere University'
 __docformat__ = 'reStructuredText'
-__all__ = []
-
-
-def main():
-    pass
-
-
-if __name__ == '__main__':
-    main()
+__all__ = ['create_dataset', 'extract_features']
 
 # EOF
