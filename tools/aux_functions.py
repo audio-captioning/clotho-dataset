@@ -71,22 +71,22 @@ def check_data_for_split(dir_audio, dir_data, dir_root, csv_split,
             raise FileExistsError('Audio file {f_name_audio} not exists in {d_audio}'.format(
                 f_name_audio=file_name_audio, d_audio=dir_audio))
 
-        for data_file in dir_root.joinpath(dir_data).iterdir():
-            # Flag for checking if there are data files for the audio file
-            audio_has_data_files = False
+        # Flag for checking if there are data files for the audio file
+        audio_has_data_files = False
 
+        # Get the original audio data
+        data_audio_original = load_audio_file(
+            audio_file=str(dir_audio.joinpath(file_name_audio)),
+            sr=int(settings_audio['sr']), mono=settings_audio['to_mono'])
+
+        for data_file in dir_root.joinpath(dir_data).iterdir():
             # Get the stem of the audio file name
-            f_stem = str(data_file).split('file_')[-1].split('.wav_')
+            f_stem = str(data_file).split('file_')[-1].split('.wav_')[0]
 
             if f_stem == file_name_audio.stem:
                 audio_has_data_files = True
                 # Get the numpy record array
                 data_array = load_numpy_object(data_file)
-
-                # Get the original audio data
-                data_audio_original = load_audio_file(
-                    audio_file=str(dir_audio.joinpath(file_name_audio)),
-                    sr=int(settings_audio['sr']), mono=settings_audio['to_mono'])
 
                 # Get the audio data from the numpy record array
                 data_audio_rec_array = data_array['audio_data'].item()
@@ -104,12 +104,18 @@ def check_data_for_split(dir_audio, dir_data, dir_root, csv_split,
 
                 # Get the original caption
                 caption_index = data_array['caption_ind'].item()
-                original_caption = csv_entry[settings_ann['captions_fields_prefix'].format(caption_index)]
+
+                # Clean it to remove any spaces before punctuation.
+                original_caption = clean_sentence(
+                    sentence=csv_entry[settings_ann['captions_fields_prefix'].format(caption_index + 1)],
+                    keep_case=True, remove_punctuation=False,
+                    remove_specials=not settings_ann['use_special_tokens'])
 
                 # Check with the file caption
                 caption_data_array = clean_sentence(
                     sentence=data_array['caption'].item(), keep_case=True,
-                    remove_punctuation=False, remove_specials=True)
+                    remove_punctuation=False,
+                    remove_specials=not settings_ann['use_special_tokens'])
 
                 if not original_caption == caption_data_array:
                     raise ValueError('Numpy object {} has wrong caption.'.format(data_file))
@@ -130,7 +136,7 @@ def check_data_for_split(dir_audio, dir_data, dir_root, csv_split,
                     raise ValueError('Numpy object {} has wrong words indices.'.format(data_file))
 
                 # Check with the indices of characters
-                caption_from_chars = ''.join([chars_list[i] for i in words_indices])
+                caption_from_chars = ''.join([chars_list[i] for i in data_array['chars_ind'].item()])
 
                 caption_data_array = clean_sentence(
                     sentence=data_array['caption'].item(),
@@ -142,9 +148,9 @@ def check_data_for_split(dir_audio, dir_data, dir_root, csv_split,
                     raise ValueError('Numpy object {} has wrong characters '
                                      'indices.'.format(data_file))
 
-            if not audio_has_data_files:
-                raise FileExistsError('Audio file {} has no associated data.'.format(
-                    file_name_audio))
+        if not audio_has_data_files:
+            raise FileExistsError('Audio file {} has no associated data.'.format(
+                file_name_audio))
 
 
 def create_lists_and_frequencies(captions, dir_root, settings_ann, settings_cntr):
@@ -259,7 +265,9 @@ def create_split_data(csv_split, dir_split, dir_audio, dir_root, words_list,
                     remove_specials=True)))
 
             if settings_ann['use_special_tokens']:
+                chars_caption.insert(0, ' ')
                 chars_caption.insert(0, '<sos>')
+                chars_caption.append(' ')
                 chars_caption.append('<eos>')
 
             indices_words = [words_list.index(word) for word in words_caption]
@@ -305,14 +313,20 @@ def get_annotations_files(settings_ann, dir_ann):
         file_name=settings_ann['evaluation_file'],
         base_dir=dir_ann)
 
-    if settings_ann['use_special_tokens']:
-        # Update the captions with <SOS> and <EOS>
-        for csv_entry in chain(csv_development, csv_evaluation):
-            caption_fields = [field_caption.format(c_ind) for c_ind in range(1, 6)]
-            captions = ['<SOS> {} <EOS>'.format(csv_entry.get(caption_field))
-                        for caption_field in caption_fields]
-            [csv_entry.update({caption_field: caption})
-             for caption_field, caption in zip(caption_fields, captions)]
+    caption_fields = [field_caption.format(c_ind) for c_ind in range(1, 6)]
+
+    for csv_entry in chain(csv_development, csv_evaluation):
+        # Clean sentence to remove any spaces before punctuations.
+
+        captions = [clean_sentence(csv_entry.get(caption_field), keep_case=True,
+                                   remove_punctuation=False, remove_specials=False)
+                    for caption_field in caption_fields]
+
+        if settings_ann['use_special_tokens']:
+            captions = ['<SOS> {} <EOS>'.format(caption) for caption in captions]
+
+        [csv_entry.update({caption_field: caption})
+         for caption_field, caption in zip(caption_fields, captions)]
 
     return csv_development, csv_evaluation
 
