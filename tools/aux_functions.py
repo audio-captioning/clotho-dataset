@@ -38,36 +38,6 @@ def check_amount_of_files(dir_audio, dir_data):
     return next(count_audio), next(count_data)
 
 
-def get_annotations_files(settings_ann, dir_ann):
-    """Reads, process (if necessary), and returns tha annotations files.
-
-    :param settings_ann: Settings to be used.
-    :type settings_ann: dict
-    :param dir_ann: Directory of the annotations files.
-    :type dir_ann: pathlib.Path
-    :return: Development and evaluation annotations files.
-    :rtype: list[collections.OrderedDict], list[collections.OrderedDict]
-    """
-    field_caption = settings_ann['captions_fields_prefix']
-    csv_development = read_csv_file(
-        file_name=settings_ann['development_file'],
-        base_dir=dir_ann)
-    csv_evaluation = read_csv_file(
-        file_name=settings_ann['evaluation_file'],
-        base_dir=dir_ann)
-
-    if settings_ann['use_special_tokens']:
-        # Update the captions with <SOS> and <EOS>
-        for csv_entry in chain(csv_development, csv_evaluation):
-            caption_fields = [field_caption.format(c_ind) for c_ind in range(1, 6)]
-            captions = ['<SOS> {} <EOS>'.format(csv_entry.get(caption_field))
-                        for caption_field in caption_fields]
-            [csv_entry.update({caption_field: caption})
-             for caption_field, caption in zip(caption_fields, captions)]
-
-    return csv_development, csv_evaluation
-
-
 def check_data_for_split(dir_audio, dir_data, dir_root, csv_split,
                          settings_ann, settings_audio, settings_cntr):
     """Goes through all audio files and checks the created data.
@@ -180,8 +150,65 @@ def check_data_for_split(dir_audio, dir_data, dir_root, csv_split,
                     file_name_audio))
 
 
+def create_lists_and_frequencies(captions, dir_root, settings_ann, settings_cntr):
+    """Creates the pickle files with words, characters, and their frequencies.
+
+    :param captions: Captions to be used (development captions are suggested).
+    :type captions: list[str]
+    :param dir_root: Root directory of data.
+    :type dir_root: pathlib.Path
+    :param settings_ann: Settings for annotations.
+    :type settings_ann: dict
+    :param settings_cntr: Settings for pickle files.
+    :type settings_cntr: dict
+    :return: Words and characters list.
+    :rtype: list[str], list[str]
+    """
+    # Get words counter
+    counter_words = get_words_counter(
+        captions=captions,
+        use_unique=settings_ann['use_unique_words_per_caption'],
+        keep_case=settings_ann['keep_case'],
+        remove_punctuation=settings_ann['remove_punctuation_words'],
+        remove_specials=not settings_ann['use_special_tokens']
+    )
+
+    # Get words and frequencies
+    words_list, frequencies_words = list(counter_words.keys()), list(counter_words.values())
+
+    # Get characters and frequencies
+    cleaned_captions = [clean_sentence(
+        sentence, keep_case=settings_ann['keep_case'],
+        remove_punctuation=settings_ann['remove_punctuation_chars'],
+        remove_specials=True) for sentence in captions]
+
+    characters_all = list(chain.from_iterable(cleaned_captions))
+    counter_characters = Counter(characters_all)
+
+    # Add special characters
+    if settings_ann['use_special_tokens']:
+        counter_characters.update(['<sos>'] * len(cleaned_captions))
+        counter_characters.update(['<eos>'] * len(cleaned_captions))
+
+    chars_list, frequencies_chars = list(counter_characters.keys()), list(counter_characters.values())
+
+    # Save to disk
+    obj_list = [words_list, frequencies_words, chars_list, frequencies_chars]
+    obj_f_names = [
+        settings_cntr['words_list_file_name'],
+        settings_cntr['words_counter_file_name'],
+        settings_cntr['characters_list_file_name'],
+        settings_cntr['characters_frequencies_file_name']
+    ]
+
+    [dump_pickle_file(obj=obj, file_name=dir_root.joinpath(obj_f_name))
+     for obj, obj_f_name in zip(obj_list, obj_f_names)]
+
+    return words_list, chars_list
+
+
 def create_split_data(csv_split, dir_split, dir_audio, dir_root, words_list,
-                       chars_list, settings_ann, settings_audio, settings_output):
+                      chars_list, settings_ann, settings_audio, settings_output):
     """Creates the data for the split.
 
     :param csv_split: Annotations of the split.
@@ -263,60 +290,33 @@ def create_split_data(csv_split, dir_split, dir_audio, dir_root, words_list,
                         audio_file_name=file_name_audio, caption_index=caption_ind))))
 
 
-def create_lists_and_frequencies(captions, dir_root, settings_ann, settings_cntr):
-    """Creates the pickle files with words, characters, and their frequencies.
+def get_annotations_files(settings_ann, dir_ann):
+    """Reads, process (if necessary), and returns tha annotations files.
 
-    :param captions: Captions to be used (development captions are suggested).
-    :type captions: list[str]
-    :param dir_root: Root directory of data.
-    :type dir_root: pathlib.Path
-    :param settings_ann: Settings for annotations.
+    :param settings_ann: Settings to be used.
     :type settings_ann: dict
-    :param settings_cntr: Settings for pickle files.
-    :type settings_cntr: dict
-    :return: Words and characters list.
-    :rtype: list[str], list[str]
+    :param dir_ann: Directory of the annotations files.
+    :type dir_ann: pathlib.Path
+    :return: Development and evaluation annotations files.
+    :rtype: list[collections.OrderedDict], list[collections.OrderedDict]
     """
-    # Get words counter
-    counter_words = get_words_counter(
-        captions=captions,
-        use_unique=settings_ann['use_unique_words_per_caption'],
-        keep_case=settings_ann['keep_case'],
-        remove_punctuation=settings_ann['remove_punctuation_words'],
-        remove_specials=not settings_ann['use_special_tokens']
-    )
+    field_caption = settings_ann['captions_fields_prefix']
+    csv_development = read_csv_file(
+        file_name=settings_ann['development_file'],
+        base_dir=dir_ann)
+    csv_evaluation = read_csv_file(
+        file_name=settings_ann['evaluation_file'],
+        base_dir=dir_ann)
 
-    # Get words and frequencies
-    words_list, frequencies_words = list(counter_words.keys()), list(counter_words.values())
-
-    # Get characters and frequencies
-    cleaned_captions = [clean_sentence(
-        sentence, keep_case=settings_ann['keep_case'],
-        remove_punctuation=settings_ann['remove_punctuation_chars'],
-        remove_specials=True) for sentence in captions]
-
-    characters_all = list(chain.from_iterable(cleaned_captions))
-    counter_characters = Counter(characters_all)
-
-    # Add special characters
     if settings_ann['use_special_tokens']:
-        counter_characters.update(['<sos>'] * len(cleaned_captions))
-        counter_characters.update(['<eos>'] * len(cleaned_captions))
+        # Update the captions with <SOS> and <EOS>
+        for csv_entry in chain(csv_development, csv_evaluation):
+            caption_fields = [field_caption.format(c_ind) for c_ind in range(1, 6)]
+            captions = ['<SOS> {} <EOS>'.format(csv_entry.get(caption_field))
+                        for caption_field in caption_fields]
+            [csv_entry.update({caption_field: caption})
+             for caption_field, caption in zip(caption_fields, captions)]
 
-    chars_list, frequencies_chars = list(counter_characters.keys()), list(counter_characters.values())
-
-    # Save to disk
-    obj_list = [words_list, frequencies_words, chars_list, frequencies_chars]
-    obj_f_names = [
-        settings_cntr['words_list_file_name'],
-        settings_cntr['words_counter_file_name'],
-        settings_cntr['characters_list_file_name'],
-        settings_cntr['characters_frequencies_file_name']
-    ]
-
-    [dump_pickle_file(obj=obj, file_name=dir_root.joinpath(obj_f_name))
-     for obj, obj_f_name in zip(obj_list, obj_f_names)]
-
-    return words_list, chars_list
+    return csv_development, csv_evaluation
 
 # EOF
