@@ -8,7 +8,8 @@ from pathlib import Path
 import numpy as np
 
 from tools.csv_functions import read_csv_file
-from tools.captions_functions import get_sentence_words, clean_sentence, get_words_counter
+from tools.captions_functions import get_sentence_words, \
+    clean_sentence, get_words_counter
 from tools.file_io import load_numpy_object, load_audio_file, \
     load_pickle_file, dump_numpy_object, dump_pickle_file
 
