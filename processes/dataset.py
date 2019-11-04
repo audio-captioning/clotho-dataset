@@ -36,7 +36,7 @@ def create_dataset(settings):
 
     # Read the annotation files
     inner_logger.info('Reading annotations files')
-    csv_development, csv_evaluation = get_annotations_files(
+    csv_dev, csv_eva = get_annotations_files(
         settings_ann=settings['annotations'],
         dir_ann=dir_root.joinpath(settings['directories']['annotations_dir']))
     inner_logger.info('Done')
@@ -46,7 +46,7 @@ def create_dataset(settings):
     captions_development = [
         csv_field.get(
             settings['annotations']['captions_fields_prefix'].format(c_ind))
-        for csv_field in csv_development
+        for csv_field in csv_dev
         for c_ind in range(1, 6)]
     inner_logger.info('Done')
 
@@ -69,8 +69,7 @@ def create_dataset(settings):
         settings_output=settings['output_files'])
 
     # For each data split (i.e. development and evaluation)
-    for split_data in [(csv_evaluation, 'evaluation')]:
-    # for split_data in [(csv_development, 'development'), (csv_evaluation, 'evaluation')]:
+    for split_data in [(csv_dev, 'development'), (csv_eva, 'evaluation')]:
 
         # Get helper variables.
         split_name = split_data[1]
