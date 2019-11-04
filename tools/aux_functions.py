@@ -71,7 +71,7 @@ def check_data_for_split(dir_audio, dir_data, dir_root, csv_split,
             raise FileExistsError('Audio file {f_name_audio} not exists in {d_audio}'.format(
                 f_name_audio=file_name_audio, d_audio=dir_audio))
 
-        for data_file in dir_data.iterdir():
+        for data_file in dir_root.joinpath(dir_data).iterdir():
             # Flag for checking if there are data files for the audio file
             audio_has_data_files = False
 

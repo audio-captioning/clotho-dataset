@@ -35,7 +35,7 @@ def create_dataset(settings):
     dir_root = Path(settings['directories']['root_dir'])
 
     # Read the annotation files
-    inner_logger.info('Reading annotations files.')
+    inner_logger.info('Reading annotations files')
     csv_development, csv_evaluation = get_annotations_files(
         settings_ann=settings['annotations'],
         dir_ann=dir_root.joinpath(settings['directories']['annotations_dir']))
