@@ -1,6 +1,6 @@
 # Feature extraction process settings.
 #
-# author: Konstantinos Drossos - -Tampere University
+# author: Konstantinos Drossos -- Tampere University
 # ===================================
 directories:
   root_dir: 'data'
