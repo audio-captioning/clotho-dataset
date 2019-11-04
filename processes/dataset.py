@@ -52,7 +52,7 @@ def create_dataset(settings):
 
     # Create lists of indices and frequencies for words and characters.
     inner_logger.info('Creating and saving words and chars lists '
-                      'and frequencies.')
+                      'and frequencies')
     words_list, chars_list = create_lists_and_frequencies(
         captions=captions_development, dir_root=dir_root,
         settings_ann=settings['annotations'],
