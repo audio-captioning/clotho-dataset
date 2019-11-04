@@ -36,9 +36,14 @@ def main():
     settings = load_settings_file(args.config_file)
     main_logger.info('Settings loaded')
 
-    main_logger.info('Starting Clotho dataset creation')
-    dataset.create_dataset(settings)
-    main_logger.info('Dataset created')
+    if settings['workflow']['create_dataset']:
+        main_logger.info('Starting Clotho dataset creation')
+        dataset.create_dataset(settings)
+        main_logger.info('Dataset created')
+
+    if settings['workflow']['extract_features']:
+        main_logger.info('Starting Clotho feature extraction')
+        main_logger.info('Features extracted')
 
 
 if __name__ == '__main__':
