@@ -67,7 +67,8 @@ def create_dataset(settings):
         settings_output=settings['output_files'])
 
     # For each data split (i.e. development and evaluation)
-    for split_data in [(csv_development, 'development'), (csv_evaluation, 'evaluation')]:
+    for split_data in [(csv_evaluation, 'evaluation')]:
+    # for split_data in [(csv_development, 'development'), (csv_evaluation, 'evaluation')]:
 
         # Get helper variables.
         split_name = split_data[-1]

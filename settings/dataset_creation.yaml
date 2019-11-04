@@ -19,6 +19,8 @@ annotations:
   keep_case: No
   remove_punctuation_words: Yes
   remove_punctuation_chars: No
+  use_unique_words_per_caption: No
+  use_unique_chars_per_caption: No
 # -----------------------------------
 output_files:
   dir_output: ''
