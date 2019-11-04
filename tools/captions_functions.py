@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from collections import Counter, defaultdict
-import re
+from re import sub as re_sub
+from collections import Counter
 from itertools import chain
 from functools import partial
-from tools import csv_functions
 
 
-__author__ = 'Konstantinos Drossos, Samuel Lipping -- Tampere University'
+__author__ = 'Konstantinos Drossos -- Tampere University'
 __docformat__ = 'reStructuredText'
 __all__ = ['get_words_counter', 'clean_sentence', 'get_sentence_words']
 
@@ -65,7 +64,7 @@ def clean_sentence(sentence, keep_case=False, remove_punctuation=True,
         the_sentence = the_sentence.replace(' <EOS>', '').replace(' <eos>', '')
 
     if remove_punctuation:
-        the_sentence = re.sub('[,.!?;:\"]', ' ', the_sentence)
+        the_sentence = re_sub('[,.!?;:\"]', ' ', the_sentence)
 
     return the_sentence
 
