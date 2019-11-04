@@ -71,7 +71,7 @@ def create_dataset(settings):
     # for split_data in [(csv_development, 'development'), (csv_evaluation, 'evaluation')]:
 
         # Get helper variables.
-        split_name = split_data[-1]
+        split_name = split_data[1]
 
         dir_split = dir_root.joinpath(
             settings['output_files']['dir_output'],
