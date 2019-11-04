@@ -4,7 +4,6 @@
 import pathlib
 import csv
 import collections
-from operator import itemgetter
 
 __author__ = 'Konstantinos Drossos -- Tampere University'
 __docformat__ = 'reStructuredText'
