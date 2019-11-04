@@ -39,15 +39,15 @@ def create_dataset(settings):
     csv_development, csv_evaluation = get_annotations_files(
         settings_ann=settings['annotations'],
         dir_ann=dir_root.joinpath(settings['directories']['annotations_dir']))
-    inner_logger.info('Done.')
+    inner_logger.info('Done')
 
     # Get all captions
-    inner_logger.info('Getting the captions.')
+    inner_logger.info('Getting the captions')
     captions_development = [
         csv_field.get(settings['annotations']['captions_fields_prefix'].format(c_ind))
         for csv_field in csv_development
         for c_ind in range(1, 6)]
-    inner_logger.info('Done.')
+    inner_logger.info('Done')
 
     # Create lists of indices and frequencies for words and characters.
     inner_logger.info('Creating and saving words and chars lists and frequencies.')
@@ -55,7 +55,7 @@ def create_dataset(settings):
         captions=captions_development, dir_root=dir_root,
         settings_ann=settings['annotations'],
         settings_cntr=settings['counters'])
-    inner_logger.info('Done.')
+    inner_logger.info('Done')
 
     # Aux partial function for convenience.
     split_func = partial(
@@ -82,9 +82,9 @@ def create_dataset(settings):
             settings['directories']['downloaded_audio_{}'.format(split_name)])
 
         # Create the data for the split.
-        inner_logger.info('Creating the {} split data.'.format(split_name))
+        inner_logger.info('Creating the {} split data'.format(split_name))
         split_func(split_data[0], dir_split, dir_downloaded_audio)
-        inner_logger.info('Done.')
+        inner_logger.info('Done')
 
         # Count and print the amount of initial and resulting files.
         nb_files_audio = get_amount_of_file_in_dir(
@@ -99,14 +99,15 @@ def create_dataset(settings):
             split_name, nb_files_data / nb_files_audio))
 
         # Check the created lists of indices for words and characters.
-        inner_logger.info('Checking the {} split.'.format(split_name))
+        inner_logger.info('Checking the {} split'.format(split_name))
         check_data_for_split(
             dir_audio=dir_root.joinpath(dir_downloaded_audio),
-            dir_data=Path(settings['dir_output'], settings['dir_data_{}'.format(split_name)]),
+            dir_data=Path(settings['output_files']['dir_output'],
+                          settings['output_files']['dir_data_{}'.format(split_name)]),
             dir_root=dir_root, csv_split=split_data[0],
             settings_ann=settings['annotations'], settings_audio=settings['audio'],
             settings_cntr=settings['counters'])
-        inner_logger.info('Done.')
+        inner_logger.info('Done')
 
 
 def main():
