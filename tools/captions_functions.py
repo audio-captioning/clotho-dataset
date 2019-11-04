@@ -42,7 +42,8 @@ def get_sentence_words(sentence, unique=False, keep_case=False,
     return words
 
 
-def clean_sentence(sentence, keep_case=False, remove_punctuation=True, remove_specials=True):
+def clean_sentence(sentence, keep_case=False, remove_punctuation=True,
+                   remove_specials=True):
     """Cleans a sentence.
 
     :param sentence: Sentence to be clean.
