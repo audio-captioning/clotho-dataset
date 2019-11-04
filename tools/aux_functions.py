@@ -15,12 +15,12 @@ from tools.file_io import load_numpy_object, load_audio_file, \
 
 __author__ = 'Konstantinos Drossos -- Tampere University'
 __docformat__ = 'reStructuredText'
-__all__ = ['check_amount_of_files', 'get_annotations_files',
+__all__ = ['amount_of_file_in_dir', 'get_annotations_files',
            'check_data_for_split', 'create_split_data',
            'create_lists_and_frequencies']
 
 
-def check_amount_of_files(the_dir):
+def amount_of_file_in_dir(the_dir):
     """Counts the amount of files in a directory.
 
     :param the_dir: Directory.
