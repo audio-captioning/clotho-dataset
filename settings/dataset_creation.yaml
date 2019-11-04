@@ -2,6 +2,10 @@
 #
 # author: Konstantinos Drossos -- Tampere University
 # ===================================
+workflow:
+  create_dataset: No
+  extract_features: Yes
+# -----------------------------------
 directories:
   root_dir: 'data'
   annotations_dir: ''
