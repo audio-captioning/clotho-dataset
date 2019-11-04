@@ -8,7 +8,7 @@ from loguru import logger
 
 from tools.argument_parsing import get_argument_parser
 from tools.file_io import load_settings_file
-from processes import dataset
+from processes import create_dataset, extract_features
 
 __author__ = 'Konstantinos Drossos -- Tampere University'
 __docformat__ = 'reStructuredText'
@@ -38,11 +38,12 @@ def main():
 
     if settings['workflow']['create_dataset']:
         main_logger.info('Starting Clotho dataset creation')
-        dataset.create_dataset(settings)
+        create_dataset(settings)
         main_logger.info('Dataset created')
 
     if settings['workflow']['extract_features']:
         main_logger.info('Starting Clotho feature extraction')
+        extract_features(settings)
         main_logger.info('Features extracted')
 
 
