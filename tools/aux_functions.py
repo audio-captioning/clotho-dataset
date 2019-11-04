@@ -13,7 +13,7 @@ from tools.captions_functions import get_sentence_words, \
 from tools.file_io import load_numpy_object, load_audio_file, \
     load_pickle_file, dump_numpy_object, dump_pickle_file
 
-__author__ = 'Konstantinos Drossos'
+__author__ = 'Konstantinos Drossos -- Tampere University'
 __docformat__ = 'reStructuredText'
 __all__ = ['check_amount_of_files', 'get_annotations_files',
            'check_data_for_split', 'create_split_data',
