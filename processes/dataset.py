@@ -10,7 +10,7 @@ from loguru import logger
 
 from tools.argument_parsing import get_argument_parser
 from tools.aux_functions import get_annotations_files, \
-    amount_of_file_in_dir, check_data_for_split, \
+    get_amount_of_file_in_dir, check_data_for_split, \
     create_split_data, create_lists_and_frequencies
 from tools.file_io import load_settings_file
 
@@ -85,8 +85,8 @@ def create_dataset(settings):
     split_func(csv_development, dir_split_dev, dir_downloaded_audio_dev)
     inner_logger.info('Done.')
 
-    nb_files_audio = amount_of_file_in_dir(dir_root.joinpath(dir_downloaded_audio_dev))
-    nb_files_data = amount_of_file_in_dir(dir_split_dev)
+    nb_files_audio = get_amount_of_file_in_dir(dir_root.joinpath(dir_downloaded_audio_dev))
+    nb_files_data = get_amount_of_file_in_dir(dir_split_dev)
 
     inner_logger.info('Amount of development audio files: {}'.format(nb_files_audio))
     inner_logger.info('Amount of development data files: {}'.format(nb_files_data))
@@ -96,8 +96,8 @@ def create_dataset(settings):
     split_func(csv_evaluation, dir_split_eva, dir_downloaded_audio_eva)
     inner_logger.info('Done.')
 
-    nb_files_audio = amount_of_file_in_dir(dir_root.joinpath(dir_downloaded_audio_eva))
-    nb_files_data = amount_of_file_in_dir(dir_split_eva)
+    nb_files_audio = get_amount_of_file_in_dir(dir_root.joinpath(dir_downloaded_audio_eva))
+    nb_files_data = get_amount_of_file_in_dir(dir_split_eva)
 
     inner_logger.info('Amount of evaluation audio files: {}'.format(nb_files_audio))
     inner_logger.info('Amount of evaluation data files: {}'.format(nb_files_data))
