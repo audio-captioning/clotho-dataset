@@ -20,24 +20,19 @@ __all__ = ['check_amount_of_files', 'get_annotations_files',
            'create_lists_and_frequencies']
 
 
-def check_amount_of_files(dir_audio, dir_data):
-    """Counts and prints the amount of files of the audio\
-    and data directories.
+def check_amount_of_files(the_dir):
+    """Counts the amount of files in a directory.
 
-    :param dir_audio: Audio files directory.
-    :type dir_audio: pathlib.Path
-    :param dir_data: Clotho data files directory.
-    :type dir_data: pathlib.Path
-    :return: Amount of files in directories.
-    :rtype: int, int
+    :param the_dir: Directory.
+    :type the_dir: pathlib.Path
+    :return: Amount of files in directory.
+    :rtype: int
     """
-    count_audio = count()
-    count_data = count()
+    counter = count()
 
-    deque(zip(dir_audio.iterdir(), count_audio))
-    deque(zip(dir_data.iterdir(), count_data))
+    deque(zip(the_dir.iterdir(), counter))
 
-    return next(count_audio), next(count_data)
+    return next(counter)
 
 
 def check_data_for_split(dir_audio, dir_data, dir_root, csv_split,
