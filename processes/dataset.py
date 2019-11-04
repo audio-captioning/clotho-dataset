@@ -44,13 +44,15 @@ def create_dataset(settings):
     # Get all captions
     inner_logger.info('Getting the captions')
     captions_development = [
-        csv_field.get(settings['annotations']['captions_fields_prefix'].format(c_ind))
+        csv_field.get(
+            settings['annotations']['captions_fields_prefix'].format(c_ind))
         for csv_field in csv_development
         for c_ind in range(1, 6)]
     inner_logger.info('Done')
 
     # Create lists of indices and frequencies for words and characters.
-    inner_logger.info('Creating and saving words and chars lists and frequencies.')
+    inner_logger.info('Creating and saving words and chars lists '
+                      'and frequencies.')
     words_list, chars_list = create_lists_and_frequencies(
         captions=captions_development, dir_root=dir_root,
         settings_ann=settings['annotations'],
@@ -72,6 +74,7 @@ def create_dataset(settings):
 
         # Get helper variables.
         split_name = split_data[1]
+        split_csv = split_data[0]
 
         dir_split = dir_root.joinpath(
             settings['output_files']['dir_output'],
@@ -83,7 +86,7 @@ def create_dataset(settings):
 
         # Create the data for the split.
         inner_logger.info('Creating the {} split data'.format(split_name))
-        split_func(split_data[0], dir_split, dir_downloaded_audio)
+        split_func(split_csv, dir_split, dir_downloaded_audio)
         inner_logger.info('Done')
 
         # Count and print the amount of initial and resulting files.
@@ -103,9 +106,11 @@ def create_dataset(settings):
         check_data_for_split(
             dir_audio=dir_root.joinpath(dir_downloaded_audio),
             dir_data=Path(settings['output_files']['dir_output'],
-                          settings['output_files']['dir_data_{}'.format(split_name)]),
-            dir_root=dir_root, csv_split=split_data[0],
-            settings_ann=settings['annotations'], settings_audio=settings['audio'],
+                          settings['output_files']['dir_data_{}'.format(
+                              split_name)]),
+            dir_root=dir_root, csv_split=split_csv,
+            settings_ann=settings['annotations'],
+            settings_audio=settings['audio'],
             settings_cntr=settings['counters'])
         inner_logger.info('Done')
 
