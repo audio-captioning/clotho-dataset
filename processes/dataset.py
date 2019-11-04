@@ -49,6 +49,7 @@ def create_dataset(settings):
         for c_ind in range(1, 6)]
     inner_logger.info('Done.')
 
+    # Create lists of indices and frequencies for words and characters.
     inner_logger.info('Creating and saving words and chars lists and frequencies.')
     words_list, chars_list = create_lists_and_frequencies(
         captions=captions_development, dir_root=dir_root,
@@ -56,16 +57,19 @@ def create_dataset(settings):
         settings_cntr=settings['counters'])
     inner_logger.info('Done.')
 
+    # Aux partial function for convenience.
     split_func = partial(
         create_split_data,
         dir_root=dir_root,
         words_list=words_list, chars_list=chars_list,
         settings_ann=settings['annotations'],
         settings_audio=settings['audio'],
-        settings_output=settings['output_files']
-    )
+        settings_output=settings['output_files'])
 
+    # For each data split (i.e. development and evaluation)
     for split_data in [(csv_development, 'development'), (csv_evaluation, 'evaluation')]:
+
+        # Get helper variables.
         split_name = split_data[-1]
 
         dir_split = dir_root.joinpath(
@@ -76,10 +80,12 @@ def create_dataset(settings):
             settings['directories']['downloaded_audio_dir'],
             settings['directories']['downloaded_audio_{}'.format(split_name)])
 
+        # Create the data for the split.
         inner_logger.info('Creating the {} split data.'.format(split_name))
         split_func(split_data[0], dir_split, dir_downloaded_audio)
         inner_logger.info('Done.')
 
+        # Count and print the amount of initial and resulting files.
         nb_files_audio = get_amount_of_file_in_dir(
             dir_root.joinpath(dir_downloaded_audio))
         nb_files_data = get_amount_of_file_in_dir(dir_split)
@@ -91,6 +97,7 @@ def create_dataset(settings):
         inner_logger.info('Amount of {} data files per audio: {}'.format(
             split_name, nb_files_data / nb_files_audio))
 
+        # Check the created lists of indices for words and characters.
         inner_logger.info('Checking the {} split.'.format(split_name))
         check_data_for_split(
             dir_audio=dir_root.joinpath(dir_downloaded_audio),
@@ -102,6 +109,8 @@ def create_dataset(settings):
 
 
 def main():
+
+    # Treat the logging.
     logger.remove()
     logger.add(stdout, format='{level} | [{time:HH:mm:ss}] {name} -- {message}.',
                level='INFO', filter=lambda record: record['extra']['indent'] == 1)
@@ -113,6 +122,7 @@ def main():
 
     main_logger.info('Doing only dataset creation')
 
+    # Check for verbosity.
     if not args.verbose:
         main_logger.info('Verbose if off. Not logging messages')
         logger.disable('__main__')
@@ -120,10 +130,12 @@ def main():
 
     main_logger.info(datetime.now().strftime('%Y-%m-%d %H:%M'))
 
+    # Load settings file.
     main_logger.info('Loading settings')
     settings = load_settings_file(args.config_file)
     main_logger.info('Settings loaded')
 
+    # Create the dataset.
     main_logger.info('Starting Clotho dataset creation')
     create_dataset(settings)
     main_logger.info('Dataset created')
