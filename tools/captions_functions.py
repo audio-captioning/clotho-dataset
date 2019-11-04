@@ -59,8 +59,8 @@ def clean_sentence(sentence, keep_case=False, remove_punctuation=True,
     """
     the_sentence = sentence if keep_case else sentence.lower()
 
-    # Remove any forgotten space before punctuation.
-    the_sentence = re_sub(r'\s([,.!?;:"](?:\s|$))', r'\1', the_sentence)
+    # Remove any forgotten space before punctuation and double space.
+    the_sentence = re_sub(r'\s([,.!?;:"](?:\s|$))', r'\1', the_sentence).replace('  ', ' ')
 
     if remove_specials:
         the_sentence = the_sentence.replace('<SOS> ', '').replace('<sos> ', '')
