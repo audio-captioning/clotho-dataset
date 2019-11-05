@@ -16,7 +16,12 @@ output:
   dir_evaluation: 'clotho_dataset_eva'
 # -----------------------------------
 process:
+  sr: 44100
+  nb_fft: 1024
+  hop_size: 512
   nb_mels: 64
+  window_function: 'hann'
+  center: Yes
   f_min: .0
   f_max:
   htk: No
