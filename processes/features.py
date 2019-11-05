@@ -65,25 +65,25 @@ def extract_features(settings_data, settings_features):
 
         # Extract the features.
         features = f_func(data_file['audio_data'].item(),
-                          **settings_features['process_settings'])
+                          **settings_features['process'])
 
         # Populate the recarray data and dtypes.
-        array_data = [data_file['file_name'].item()]
+        array_data = (data_file['file_name'].item(), )
         dtypes = [('file_name', data_file['file_name'].dtype)]
 
         # Check if we keeping the raw audio data.
         if settings_features['keep_raw_audio_data']:
             # And add them to the recarray data and dtypes.
-            array_data.append(data_file['audio_data'].item())
+            array_data += (data_file['audio_data'].item(), )
             dtypes.append(('audio_data', data_file['audio_data'].dtype))
 
         # Add the rest to the recarray.
-        array_data.extend([
+        array_data += (
             features,
             data_file['caption'].item(),
             data_file['caption_ind'].item(),
             data_file['words_ind'].item(),
-            data_file['chars_ind'].item()])
+            data_file['chars_ind'].item())
         dtypes.extend([
             ('features', np.dtype(object)),
             ('caption', data_file['caption'].dtype),
@@ -93,7 +93,7 @@ def extract_features(settings_data, settings_features):
         ])
 
         # Make the recarray
-        np_rec_array = np.rec.array(array_data, dtype=dtypes)
+        np_rec_array = np.rec.array([array_data], dtype=dtypes)
 
         # Make the path for serializing the recarray.
         parent_path = dir_output_dev \
@@ -102,7 +102,7 @@ def extract_features(settings_data, settings_features):
 
         file_path = parent_path.joinpath(data_file_name.name)
 
-        # Dumpy it.
+        # Dump it.
         dump_numpy_object(np_rec_array, str(file_path))
 
 
