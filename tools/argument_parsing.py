@@ -15,7 +15,10 @@ def get_argument_parser():
     :rtype: argparse.ArgumentParser
     """
     arg_parser = ArgumentParser()
-    arg_parser.add_argument('--config-file', type=str)
+    arg_parser.add_argument('-d', '--config-file-dataset',
+                            type=str, default='dataset_creation')
+    arg_parser.add_argument('-f', '--config-file-features',
+                            type=str, default='feature_extraction')
     arg_parser.add_argument('--verbose', action='store_true')
 
     return arg_parser
