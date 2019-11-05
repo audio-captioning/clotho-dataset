@@ -138,7 +138,7 @@ def main():
 
     # Load settings file.
     main_logger.info('Loading settings')
-    settings = load_settings_file(args.config_file)
+    settings = load_settings_file(args.config_file_dataset)
     main_logger.info('Settings loaded')
 
     # Create the dataset.
