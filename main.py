@@ -33,17 +33,18 @@ def main():
     main_logger.info(datetime.now().strftime('%Y-%m-%d %H:%M'))
 
     main_logger.info('Loading settings')
-    settings = load_settings_file(args.config_file)
+    settings_dataset = load_settings_file(args.config_file_dataset)
+    settings_features = load_settings_file(args.config_file_features)
     main_logger.info('Settings loaded')
 
-    if settings['workflow']['create_dataset']:
+    if settings_dataset['workflow']['create_dataset']:
         main_logger.info('Starting Clotho dataset creation')
-        create_dataset(settings)
+        create_dataset(settings_dataset)
         main_logger.info('Dataset created')
 
-    if settings['workflow']['extract_features']:
+    if settings_dataset['workflow']['extract_features']:
         main_logger.info('Starting Clotho feature extraction')
-        extract_features(settings)
+        extract_features(settings_dataset, settings_features)
         main_logger.info('Features extracted')
 
 
