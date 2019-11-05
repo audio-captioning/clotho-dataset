@@ -19,7 +19,7 @@ def get_argument_parser():
                             type=str, default='dataset_creation')
     arg_parser.add_argument('-f', '--config-file-features',
                             type=str, default='feature_extraction')
-    arg_parser.add_argument('--verbose', action='store_true')
+    arg_parser.add_argument('-v', '--verbose', action='store_true')
 
     return arg_parser
 
