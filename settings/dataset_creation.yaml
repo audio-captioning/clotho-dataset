@@ -32,15 +32,6 @@ output_files:
   dir_data_evaluation: 'evaluation'
   file_name_template: 'clotho_file_{audio_file_name}_{caption_index}.npy'
 # -----------------------------------
-features:
-  file_name: 'clotho_file_${audio_file_name}_${caption_index}.npy'
-  input_features:
-    - 'stft'
-    - 'mel_band_energies'
-  target_values:
-    - 'words_indices'
-    - 'chars_indices'
-# -----------------------------------
 audio:
   sr: 44100
   to_mono: Yes
