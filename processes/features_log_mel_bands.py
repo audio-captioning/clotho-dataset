@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import numpy as np
 from librosa.feature import melspectrogram
 
 __author__ = 'Konstantinos Drossos'
@@ -36,13 +37,15 @@ def feature_extraction(audio_data, sr, nb_fft, hop_size, nb_mels, f_min, f_max, 
     :type center: bool
     :param power: Power of the magnitude.
     :type power: float
-    :return: Mel bands energies of shape=(t, nb_mels)
+    :return: Log mel-bands energies of shape=(t, nb_mels)
     :rtype: numpy.ndarray
     """
     y = audio_data/abs(audio_data).max()
-    return melspectrogram(y=y, sr=sr, n_fft=nb_fft, hop_length=hop_size,
-                          win_length=nb_fft, window=window_function, center=center,
-                          power=power, n_mels=nb_mels, fmin=f_min, fmax=f_max,
-                          htk=htk, norm=norm).T
+    mel_bands = melspectrogram(
+        y=y, sr=sr, n_fft=nb_fft, hop_length=hop_size, win_length=nb_fft,
+        window=window_function, center=center, power=power, n_mels=nb_mels,
+        fmin=f_min, fmax=f_max, htk=htk, norm=norm).T
+
+    return np.log(mel_bands + np.finfo(float).eps)
 
 # EOF
