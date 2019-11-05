@@ -37,20 +37,6 @@ audio:
   to_mono: Yes
   max_abs_value: 1.
 # -----------------------------------
-stft:
-  nb_fft: 1024
-  hop_factor: .5
-  window_function: 'hamming'
-  center: Yes
-# -----------------------------------
-mel_band_energies:
-  nb_mels: 64
-  f_min: .0
-  f_max:
-  htk: No
-  power: 1.
-  norm: 1
-# -----------------------------------
 counters:
   words_list_file_name: 'words_list.p'
   words_counter_file_name: 'words_frequencies.p'
