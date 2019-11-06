@@ -7,7 +7,9 @@ input/output values, for using Clotho dataset with your audio
 captioning methods. 
 
 The creation of clotho dataset is presented in our paper: 
-K. Drossos, S. Lipping, and T. Virtanen, "Clotho: An Audio Captioning Dataset"
+
+_K. Drossos, S. Lipping, and T. Virtanen, "Clotho: An Audio Captioning Dataset"_
+
 which is submitted for review to ICASSP 2020. An online version of our paper can 
 be found at: https://arxiv.org/abs/1910.09387 
 
