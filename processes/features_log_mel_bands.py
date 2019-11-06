@@ -4,7 +4,7 @@
 import numpy as np
 from librosa.feature import melspectrogram
 
-__author__ = 'Konstantinos Drossos'
+__author__ = 'Konstantinos Drossos -- Tampere University'
 __docformat__ = 'reStructuredText'
 __all__ = ['feature_extraction']
 
