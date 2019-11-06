@@ -22,7 +22,6 @@ be found at: https://arxiv.org/abs/1910.09387
 1. [Set up of data and code](#set-up-of-data-and-code)
 2. [Using the code](#using-the-code)
 3. [Using your own feature extraction functions](#using-your-own-feature-extraction-functions)
-4. [About Clotho, one of the three fates](#about-clotho-one-of-the-three-fates)
 
 ----
 
@@ -119,17 +118,45 @@ Make sure that you have specified correctly the desired/needed names for directo
 
 #### Two-step approach
  
+There might be the case where you want to have the data for each split but try 
+different features. In such a case, you can first create the data for the splits
+and, in a second step, extract the features.
 
-### Explanation of settings
+To do so, you can switch the flags in the `settings/dataset_creation.yaml` file:
 
-#### File: dataset_creation.yaml
+````
+workflow: 
+  create_dataset: Yes
+  extract_features: Yes
+````
 
-#### File: feature_extraction.yaml
+and choose the desired action. 
 
 ----
 
 ## Using your own feature extraction functions
 
-----
+By default, the extracted features are 64 log mel-band energies. You can 
+provide your own function for extraction features. This function should: 
 
-## About Clotho, one of the three fates
+1. Accept as first argument an `numpy.ndarray` object
+2. Accept as other arguments the settings for the feature extraction process
+3. Return one `numpy.ndarray` object with the extracted features
+4. Called `feature_extraction`
+
+The values for settings of the other arguments are from the 
+`settings/feature_extraction.yaml` file, under the key `process`. The name of 
+the other arguments should be the keys for the entries in the
+`process` field.
+
+For example, with the current `settings/feature_extraction.yaml`, to the
+feature extraction process are given as arguments all the entries from 
+line 19 to 29 of the file. That is: 
+
+````
+kwargs = {'sr': 44100, 'nb_fft': 1024, hop_size=512, ...}
+````
+
+Finally, you have to specify the package and module of the function in the 
+`settings/feature_extraction.yaml` file. The package is specified at the
+`package` entry and the module at the `module` entry. 
