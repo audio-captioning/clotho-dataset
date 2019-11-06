@@ -159,4 +159,5 @@ kwargs = {'sr': 44100, 'nb_fft': 1024, hop_size=512, ...}
 
 Finally, you have to specify the package and module of the function in the 
 `settings/feature_extraction.yaml` file. The package is specified at the
-`package` entry and the module at the `module` entry. 
+`package` entry and the module at the `module` entry. As an example, you 
+can check the current feature extraction function. 
