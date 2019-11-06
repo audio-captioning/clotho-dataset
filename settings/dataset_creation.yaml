@@ -10,8 +10,8 @@ directories:
   root_dir: 'data'
   annotations_dir: ''
   downloaded_audio_dir: 'downloaded_audio'
-  downloaded_audio_development: 'development'
-  downloaded_audio_evaluation: 'evaluation'
+  downloaded_audio_development: 'clotho_audio_development'
+  downloaded_audio_evaluation: 'clotho_audio_evaluation'
 # -----------------------------------
 annotations:
   development_file: 'clotho_captions_development.csv'
