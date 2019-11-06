@@ -3,7 +3,7 @@
 # author: Konstantinos Drossos -- Tampere University
 # ===================================
 workflow:
-  create_dataset: No
+  create_dataset: Yes
   extract_features: Yes
 # -----------------------------------
 directories:
