@@ -71,13 +71,60 @@ settings file `dataset_creation.yaml` in the `settings` directory.
 
 ## Using the code
 
+The data that you downloaded from Zenodo are audio files and captions in CSV files. To use
+the data, you most probably want to have an audio file as an input to your system and a 
+caption as a targeted output. Also, most probably you will not use raw audio samples as an input, but some features
+extracted from the raw audio. 
+
+With the code in this repository you can:
+
+1. Create numpy objects with audio and corresponding caption
+2. Extract features from the audio and insert them to the numpy objects with the captions
+
 To use the code in this repository you can either use the bash script 
 `clotho-dataset-script.sh` (which will run the complete process) or use the `main` function
 from the files `main.py`, `processes/dataset.py`, and `processes/features.py`. 
 
 ### Creating the split data
 
+To create the split data, you can use the settings in the `settings/dataset_creation.yaml`
+file and the function `create_dataset` from the `processes/dataset.py` file. You can do this
+by either directly using the `processes/dataset.py` file or using the script 
+`clotho-dataset-script.sh`. In any case, the process will use the settings in the
+`settings/dataset_creation.yaml` file.
+
 ### Extracting features 
+
+To extract features from audio data, you have first to create the split data using the 
+process described above. Thus, you can follow a two-step approach where you first create 
+the split data and then you extract features, or do everything in one step. 
+
+By default, the features that are extracted are 64 log mel-bands, using the settings
+that are in the file `settings/feature_extraction.yaml`. 
+
+#### One-step approach
+If you do everything in one step, then make sure that both of the entries under `workflow`
+in `settings/dataset_creation.yaml` are set to `Yes`. That is, you should have:
+
+````
+workflow: 
+  create_dataset: Yes
+  extract_features: Yes
+````
+
+Then, you just use the script `clotho-dataset-script.sh` and everything will be done. 
+
+Make sure that you have specified correctly the desired/needed names for directories in the 
+`settings/dataset_creation.yaml` file.
+
+#### Two-step approach
+ 
+
+### Explanation of settings
+
+#### File: dataset_creation.yaml
+
+#### File: feature_extraction.yaml
 
 ----
 
