@@ -14,7 +14,7 @@ found here: https://arxiv.org/abs/1910.09387
 ## Table of contents
 
 1. [Set up of data and code](#set-up-of-data-and-code)
-2. [Using the script](#using-the-script)
+2. [Using the code](#using-the-code)
 3. [Using your own feature extraction functions](#using-your-own-feature-extraction-functions)
 4. [About Clotho, one of the three fates](#about-clotho-one-of-the-three-fates)
 
@@ -57,8 +57,26 @@ The directories created by expanding the 7z files mentioned in the previous subs
 have to be in the `data` directory. That is, the `clotho_audio_development` and 
 `clotho_audio_evaluation` directories have to be placed in the `data` directory. 
 
-## Using the script
+If you want to change the naming of the directories of audio data (i.e. `clotho_audio_development`
+and `clotho_audio_evaluation`) then make sure to do the corresponding changes at the 
+settings file `dataset_creation.yaml` in the `settings` directory. 
+
+----
+
+## Using the code
+
+To use the code in this repository you can either use the bash script 
+`clotho-dataset-script.sh` (which will run the complete process) or use the `main` function
+from the files `main.py`, `processes/dataset.py`, and `processes/features.py`. 
+
+### Creating the split data
+
+### Extracting features 
+
+----
 
 ## Using your own feature extraction functions
+
+----
 
 ## About Clotho, one of the three fates
