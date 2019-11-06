@@ -137,9 +137,9 @@ and choose the desired action.
 ## Using your own feature extraction functions
 
 By default, the extracted features are 64 log mel-band energies. You can 
-provide your own function for extraction features. This function should: 
+provide your own function for extraction of features. This function should: 
 
-1. Accept as first argument an `numpy.ndarray` object
+1. Accept as first argument a `numpy.ndarray` object
 2. Accept as other arguments the settings for the feature extraction process
 3. Return one `numpy.ndarray` object with the extracted features
 4. Called `feature_extraction`
