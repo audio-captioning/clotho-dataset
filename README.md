@@ -44,8 +44,8 @@ the evaluation split:
 
 Expanding the 7z files, will produce two directories: 
 
-1. `clotho_audio_development.7z` will produce the   directory
-2. `clotho_audio_evaluation.7z` will produce the   directory
+1. `clotho_audio_development.7z` will produce the `clotho_audio_development` directory
+2. `clotho_audio_evaluation.7z` will produce the `clotho_audio_evaluation` directory
 
 ### Clone and set-up the code
 
