@@ -44,8 +44,8 @@ the evaluation split:
 
 Expanding the 7z files, will produce two directories: 
 
-1. `clotho_audio_development.7z` will produce the `clotho_audio_development` directory
-2. `clotho_audio_evaluation.7z` will produce the `clotho_audio_evaluation` directory
+1. `clotho_audio_development.7z` will produce the `development` directory
+2. `clotho_audio_evaluation.7z` will produce the `evaluation` directory
 
 ### Clone and set-up the code
 
@@ -59,11 +59,11 @@ the `clotho-baseline-dataset`, you can find the following directories:
 4. `tools`
 
 The directories created by expanding the 7z files mentioned in the previous subsection,
-have to be in the `data` directory. That is, the `clotho_audio_development` and 
-`clotho_audio_evaluation` directories have to be placed in the `data` directory. 
+have to be in the `data` directory. That is, the `development` and 
+`evaluation` directories have to be placed in the `data` directory. 
 
-If you want to change the naming of the directories of audio data (i.e. `clotho_audio_development`
-and `clotho_audio_evaluation`) then make sure to do the corresponding changes at the 
+If you want to change the naming of the directories of audio data (i.e. `development`
+and `evaluation`) then make sure to do the corresponding changes at the 
 settings file `dataset_creation.yaml` in the `settings` directory. 
 
 ----
