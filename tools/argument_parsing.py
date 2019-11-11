@@ -8,7 +8,7 @@ __docformat__ = 'reStructuredText'
 __all__ = ['get_argument_parser']
 
 
-def get_argument_parser():
+def get_argument_parser() -> ArgumentParser:
     """Creates and returns the ArgumentParser for this project.
 
     :return: The argument parser.

@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from itertools import chain, count
-from collections import deque, Counter
+from collections import deque, Counter, OrderedDict
 from pathlib import Path
+from typing import MutableSequence, MutableMapping, \
+    Tuple, List, Any
 
 import numpy as np
 
@@ -20,7 +22,7 @@ __all__ = ['get_amount_of_file_in_dir', 'get_annotations_files',
            'create_lists_and_frequencies']
 
 
-def get_amount_of_file_in_dir(the_dir):
+def get_amount_of_file_in_dir(the_dir: Path) -> int:
     """Counts the amount of files in a directory.
 
     :param the_dir: Directory.
@@ -35,8 +37,11 @@ def get_amount_of_file_in_dir(the_dir):
     return next(counter)
 
 
-def check_data_for_split(dir_audio, dir_data, dir_root, csv_split,
-                         settings_ann, settings_audio, settings_cntr):
+def check_data_for_split(dir_audio: Path, dir_data: Path, dir_root: Path,
+                         csv_split: MutableSequence[MutableMapping[str, str]],
+                         settings_ann: MutableMapping[str, Any],
+                         settings_audio: MutableMapping[str, Any],
+                         settings_cntr: MutableMapping[str, Any]) -> None:
     """Goes through all audio files and checks the created data.
 
     Gets each audio file and checks if there are associated data. If there are,\
@@ -153,7 +158,11 @@ def check_data_for_split(dir_audio, dir_data, dir_root, csv_split,
                 file_name_audio))
 
 
-def create_lists_and_frequencies(captions, dir_root, settings_ann, settings_cntr):
+def create_lists_and_frequencies(captions: MutableSequence[str],
+                                 dir_root: Path,
+                                 settings_ann: MutableMapping[str, Any],
+                                 settings_cntr: MutableMapping[str, Any]) -> \
+        Tuple[List[str], List[str]]:
     """Creates the pickle files with words, characters, and their frequencies.
 
     :param captions: Captions to be used (development captions are suggested).
@@ -210,8 +219,11 @@ def create_lists_and_frequencies(captions, dir_root, settings_ann, settings_cntr
     return words_list, chars_list
 
 
-def create_split_data(csv_split, dir_split, dir_audio, dir_root, words_list,
-                      chars_list, settings_ann, settings_audio, settings_output):
+def create_split_data(csv_split: MutableSequence[MutableMapping[str, str]], dir_split: Path,
+                      dir_audio: Path, dir_root: Path, words_list: MutableSequence[str],
+                      chars_list: MutableSequence[str], settings_ann: MutableMapping[str, Any],
+                      settings_audio: MutableMapping[str, Any],
+                      settings_output: MutableMapping[str, Any]) -> None:
     """Creates the data for the split.
 
     :param csv_split: Annotations of the split.
@@ -295,7 +307,8 @@ def create_split_data(csv_split, dir_split, dir_audio, dir_root, words_list,
                         audio_file_name=file_name_audio, caption_index=caption_ind))))
 
 
-def get_annotations_files(settings_ann, dir_ann):
+def get_annotations_files(settings_ann: MutableMapping[str, Any], dir_ann: Path) -> \
+        Tuple[List[OrderedDict[str, Any]], List[OrderedDict[str, Any]]]:
     """Reads, process (if necessary), and returns tha annotations files.
 
     :param settings_ann: Settings to be used.

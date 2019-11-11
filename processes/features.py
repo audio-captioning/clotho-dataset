@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from sys import stdout
+from typing import MutableMapping, Any
 from pathlib import Path
 from importlib import import_module
 from itertools import chain
@@ -18,13 +19,14 @@ __docformat__ = 'reStructuredText'
 __all__ = ['extract_features']
 
 
-def extract_features(settings_data, settings_features):
+def extract_features(settings_data: MutableMapping[str, Any],
+                     settings_features: MutableMapping[str, Any]) -> None:
     """Extracts features from the audio data of Clotho.
 
     :param settings_data: Settings for creating data files.
-    :type settings_data: dict
+    :type settings_data: dict[str, T]
     :param settings_features: Settings for feature extraction.
-    :type settings_features: dict
+    :type settings_features: dict[str, T]
     """
     # Get the root directory.
     dir_root = Path(settings_data['directories']['root_dir'])

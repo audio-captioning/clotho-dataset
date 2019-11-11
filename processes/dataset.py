@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from typing import MutableMapping, Any
 from sys import stdout
 from datetime import datetime
 from pathlib import Path
@@ -19,7 +20,7 @@ __docformat__ = 'reStructuredText'
 __all__ = ['create_dataset']
 
 
-def create_dataset(settings):
+def create_dataset(settings: MutableMapping[str, Any]) -> None:
     """Creates the dataset.
 
     Gets the dictionary with the settings and creates

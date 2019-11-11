@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from typing import Optional, List, MutableSequence
 from re import sub as re_sub
 from collections import Counter
 from itertools import chain
@@ -12,8 +13,11 @@ __docformat__ = 'reStructuredText'
 __all__ = ['get_words_counter', 'clean_sentence', 'get_sentence_words']
 
 
-def get_sentence_words(sentence, unique=False, keep_case=False,
-                       remove_punctuation=True, remove_specials=True):
+def get_sentence_words(sentence: str,
+                       unique: Optional[bool] = False,
+                       keep_case: Optional[bool] = False,
+                       remove_punctuation: Optional[bool] = True,
+                       remove_specials: Optional[bool] = True) -> List[str]:
     """Splits input sentence into words.
     
     :param sentence: Sentence to split
@@ -41,8 +45,10 @@ def get_sentence_words(sentence, unique=False, keep_case=False,
     return words
 
 
-def clean_sentence(sentence, keep_case=False, remove_punctuation=True,
-                   remove_specials=True):
+def clean_sentence(sentence: str,
+                   keep_case: Optional[bool] = False,
+                   remove_punctuation: Optional[bool] = True,
+                   remove_specials: Optional[bool] = True) -> str:
     """Cleans a sentence.
 
     :param sentence: Sentence to be clean.
@@ -72,8 +78,11 @@ def clean_sentence(sentence, keep_case=False, remove_punctuation=True,
     return the_sentence
 
 
-def get_words_counter(captions, use_unique=False, keep_case=False,
-                      remove_punctuation=True, remove_specials=True):
+def get_words_counter(captions: MutableSequence[str],
+                      use_unique: Optional[bool] = False,
+                      keep_case: Optional[bool] = False,
+                      remove_punctuation: Optional[bool] = True,
+                      remove_specials: Optional[bool] = True) -> Counter:
     """Creates a Counter object from the\
     words in the captions.
 

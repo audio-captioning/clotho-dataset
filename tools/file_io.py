@@ -1,13 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pathlib
+from typing import TYPE_CHECKING, Optional, Union, Dict, Any
 from tools import yaml_loader
 import yaml
 from librosa import load
 import numpy as np
 import os
 import pickle
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 __author__ = 'Konstantinos Drossos -- Tampere University'
 __docformat__ = 'reStructuredText'
@@ -18,7 +21,9 @@ __all__ = [
 ]
 
 
-def dump_numpy_object(np_obj, file_name, ext='.npy', replace_ext=True):
+def dump_numpy_object(np_obj: np.ndarray,
+                      file_name: str, ext: Optional[str] = '.npy',
+                      replace_ext: Optional[bool] = True) -> None:
     """Dumps a numpy object to HDD.
 
     :param np_obj: The numpy object.
@@ -37,7 +42,8 @@ def dump_numpy_object(np_obj, file_name, ext='.npy', replace_ext=True):
             else file_name, np_obj)
 
 
-def dump_pickle_file(obj, file_name, protocol=2):
+def dump_pickle_file(obj: object, file_name: Union[str, Path],
+                     protocol: Optional[int] = 2):
     """Dumps an object to pickle file.
 
     :param obj: The object to dump.
@@ -53,7 +59,9 @@ def dump_pickle_file(obj, file_name, protocol=2):
         pickle.dump(obj, f, protocol=protocol)
 
 
-def load_audio_file(audio_file, sr, mono, offset=0.0, duration=None):
+def load_audio_file(audio_file: str, sr: int, mono: bool,
+                    offset: Optional[float] = 0.0,
+                    duration: Optional[Union[float, None]] = None) -> np.ndarray:
     """Loads the data of an audio file.
 
     :param audio_file: The path of the audio file.
@@ -69,13 +77,11 @@ def load_audio_file(audio_file, sr, mono, offset=0.0, duration=None):
     :return: The audio data.
     :rtype: numpy.ndarray
     """
-    return load(
-        path=audio_file, sr=sr, mono=mono, offset=offset,
-        duration=duration
-    )[0]
+    return load(path=audio_file, sr=sr, mono=mono,
+                offset=offset, duration=duration)[0]
 
 
-def load_numpy_object(file_name):
+def load_numpy_object(file_name: Union[str, Path]) -> Union[np.ndarray, np.recarray]:
     """Loads and returns a numpy object.
 
     :param file_name: File name of the numpy object.
@@ -86,7 +92,7 @@ def load_numpy_object(file_name):
     return np.load(str(file_name), allow_pickle=True)
 
 
-def load_pickle_file(file_name, encoding='latin1'):
+def load_pickle_file(file_name: Path, encoding: Optional[str] = 'latin1') -> Any:
     """Loads a pickle file.
 
     :param file_name: File name (extension included).
@@ -94,7 +100,7 @@ def load_pickle_file(file_name, encoding='latin1'):
     :param encoding: Encoding of the file.
     :type encoding: str
     :return: Loaded object.
-    :rtype: object|list|dict|numpy.ndarray
+    :rtype: object
     """
     str_file_name = file_name if type(file_name) == str else str(file_name)
 
@@ -102,7 +108,9 @@ def load_pickle_file(file_name, encoding='latin1'):
         return pickle.load(f, encoding=encoding)
 
 
-def load_settings_file(file_name, settings_dir=pathlib.Path('settings')):
+def load_settings_file(file_name: str,
+                       settings_dir: Optional[Path] = Path('settings')) \
+        -> Dict[str, Any]:
     """Reads and returns the contents of a YAML settings file.
 
     :param file_name: The name of the settings file.
@@ -112,13 +120,13 @@ def load_settings_file(file_name, settings_dir=pathlib.Path('settings')):
     :return: The contents of the YAML settings file.
     :rtype: dict
     """
-    settings_dir = pathlib.Path(settings_dir) \
+    settings_dir = Path(settings_dir) \
         if type(settings_dir) == str else settings_dir
     settings_file_path = settings_dir.joinpath('{}.yaml'.format(file_name))
     return load_yaml_file(settings_file_path)
 
 
-def load_yaml_file(file_path):
+def load_yaml_file(file_path: Path) -> Dict[str, Any]:
     """Reads and returns the contents of a YAML file.
 
     :param file_path: The path to the YAML file.
@@ -127,7 +135,7 @@ def load_yaml_file(file_path):
     :rtype: dict
     """
     if type(file_path) == str:
-        file_path = pathlib.Path(file_path)
+        file_path = Path(file_path)
 
     with file_path.open('r') as f:
         return yaml.load(f, Loader=yaml_loader.YAMLLoader)
