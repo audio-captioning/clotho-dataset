@@ -15,6 +15,10 @@ be found at: https://arxiv.org/abs/1910.09387
 
 **If you use Clotho dataset, please cite our paper.**
 
+If you use the code in this repository to handle the Clotho dataset, then you can
+find useful the `DataLoader` in the
+[Clotho data loader repository](https://github.com/dr-costas/clotho-dataloader).
+
 ----
 
 ## Table of contents
