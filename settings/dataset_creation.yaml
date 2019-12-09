@@ -9,7 +9,7 @@ workflow:
 directories:
   root_dir: 'data'
   annotations_dir: ''
-  downloaded_audio_dir: 'downloaded_audio'
+  downloaded_audio_dir: ''
   downloaded_audio_development: 'development'
   downloaded_audio_evaluation: 'evaluation'
 # -----------------------------------
