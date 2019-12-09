@@ -308,7 +308,7 @@ def create_split_data(csv_split: MutableSequence[MutableMapping[str, str]], dir_
 
 
 def get_annotations_files(settings_ann: MutableMapping[str, Any], dir_ann: Path) -> \
-        Tuple[List[OrderedDict[str, Any]], List[OrderedDict[str, Any]]]:
+        Tuple[List[MutableMapping[str, Any]], List[MutableMapping[str, Any]]]:
     """Reads, process (if necessary), and returns tha annotations files.
 
     :param settings_ann: Settings to be used.
