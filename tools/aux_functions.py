@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from itertools import chain, count
-from collections import deque, Counter, OrderedDict
+from collections import deque, Counter
 from pathlib import Path
 from typing import MutableSequence, MutableMapping, \
     Tuple, List, Any
