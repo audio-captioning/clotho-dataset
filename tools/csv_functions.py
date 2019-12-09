@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Optional, List, Union, TYPE_CHECKING
+from typing import Optional, List, Union
 from pathlib import Path
 import csv
-if TYPE_CHECKING:
-    from collections import OrderedDict
+from collections import OrderedDict
 
 __author__ = 'Konstantinos Drossos -- Tampere University'
 __docformat__ = 'reStructuredText'
