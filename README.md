@@ -31,7 +31,7 @@ find useful the `DataLoader` in the
 
 ## Set up of data and code
 
-To set up the data and the code, you need the data of Clotho dfrom Zenodo and the code from the repository. 
+To set up the data and the code, you need the data of Clotho from Zenodo and the code from the repository. Finally, you need to set up the dependencies. For the latter, we provide a ready made environment with Anaconda. 
 
 ### Getting the data from Zenodo
 
@@ -69,6 +69,25 @@ have to be in the `data` directory. That is, the `development` and
 If you want to change the naming of the directories of audio data (i.e. `development`
 and `evaluation`) then make sure to do the corresponding changes at the 
 settings file `dataset_creation.yaml` in the `settings` directory. 
+
+### Install dependencies
+
+To install the necessary dependecies, you can use the Anaconda package manager. If you want to use a different package manager (e.g. PIP) you can check the packages that are needed by the `clotho_conda_requirements.yaml` file. 
+
+With the provide file (), you can create a new environment with conda and use it to run the code in this repository. The name of the environment is `clotho-baseline-dataset`. You can create the environment by using the `conda` commands. 
+
+First, make sure that you have the Anaconda set up in your computer. If not, please install it. Then, open your terminal and navigate to the root directory of the current repository. Then, issue the following command: 
+
+```
+conda env create --file clotho_conda_requirements.yaml 
+conda activate clotho-baseline-dataset
+```
+
+That's it! Now you have installed all the necessary packages, the proper Python version (i.e. 3.7), and you are set up to use the code from this repository. When you are finished, and if youdo not whish to keep the `clotho-baseline-dataset` conda environment, you can use the following command which **will delete the `clotho-baseline-dataset` environment**:
+
+```
+conda remove --name clotho-baseline-dataset --all
+```
 
 ----
 
