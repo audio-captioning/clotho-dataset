@@ -3,8 +3,9 @@
 
 from typing import Optional, List, Union
 from pathlib import Path
-import csv
 from collections import OrderedDict
+
+import csv
 
 __author__ = 'Konstantinos Drossos -- Tampere University'
 __docformat__ = 'reStructuredText'
