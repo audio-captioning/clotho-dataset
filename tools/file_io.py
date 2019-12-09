@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import TYPE_CHECKING, Optional, Union, Dict, Any
-from tools import yaml_loader
-import yaml
-from librosa import load
-import numpy as np
+from typing import Optional, Union, Dict, Any
+from pathlib import Path
 import os
 import pickle
+import yaml
 
-if TYPE_CHECKING:
-    from pathlib import Path
+from librosa import load
+import numpy as np
+
+from tools import yaml_loader
 
 __author__ = 'Konstantinos Drossos -- Tampere University'
 __docformat__ = 'reStructuredText'
