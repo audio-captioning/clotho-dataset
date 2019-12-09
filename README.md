@@ -134,7 +134,12 @@ workflow:
   extract_features: Yes
 ````
 
-Then, you just use the script `clotho-dataset-script.sh` and everything will be done. 
+Then, you just use the script `clotho-dataset-script.sh` and everything will be done. To use the script `clotho-dataset-script.sh`, open your terminal, navigate to the root directory of the repository, and issue the following commands: 
+
+```
+chdmo +x clotho-dataset-script.sh
+./clotho-dataset-script.sh
+```
 
 Make sure that you have specified correctly the desired/needed names for directories in the 
 `settings/dataset_creation.yaml` file.
