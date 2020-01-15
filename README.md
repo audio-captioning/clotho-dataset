@@ -19,6 +19,8 @@ If you use the code in this repository to handle the Clotho dataset, then you ca
 find useful the `DataLoader` in the
 [Clotho data loader repository](https://github.com/audio-captioning/clotho-dataloader).
 
+This repository is maintained by [K. Drossos](https://github.com/dr-costas).
+
 ----
 
 ## Table of contents
