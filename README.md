@@ -8,10 +8,9 @@ captioning methods.
 
 The creation of clotho dataset is presented in our paper: 
 
-_K. Drossos, S. Lipping, and T. Virtanen, "Clotho: An Audio Captioning Dataset"_
+_K. Drossos, S. Lipping, and T. Virtanen, "Clotho: An Audio Captioning Dataset," accepted in IEEE International Conference on Acoustics, Speech, and Signal Processing (ICASSP), May 4-8, 2020_
 
-which is submitted for review to ICASSP 2020. An online version of our paper can 
-be found at: https://arxiv.org/abs/1910.09387 
+An online version of our paper can be found at: https://arxiv.org/abs/1910.09387 
 
 **If you use Clotho dataset, please cite our paper.**
 
