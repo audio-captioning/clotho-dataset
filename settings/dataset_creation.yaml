@@ -5,6 +5,7 @@
 workflow:
   create_dataset: Yes
   extract_features: Yes
+  nb_workers: 12
 # -----------------------------------
 directories:
   root_dir: 'data'
