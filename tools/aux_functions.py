@@ -3,6 +3,8 @@
 
 from typing import MutableSequence, MutableMapping, \
     Tuple, List, Any, Union
+from multiprocessing import Pool
+from functools import partial
 from itertools import chain, count
 from collections import deque, Counter
 from pathlib import Path
@@ -318,7 +320,8 @@ def create_split_data(csv_split: MutableSequence[MutableMapping[str, str]],
                       chars_list: MutableSequence[str],
                       settings_ann: MutableMapping[str, Any],
                       settings_audio: MutableMapping[str, Any],
-                      settings_output: MutableMapping[str, Any]) \
+                      settings_output: MutableMapping[str, Any],
+                      workers: int) \
         -> None:
     """Creates the data for the split.
 
@@ -340,6 +343,9 @@ def create_split_data(csv_split: MutableSequence[MutableMapping[str, str]],
     :type settings_audio: dict
     :param settings_output: Settings for the output files.
     :type settings_output: dict
+    :param workers: Amount of workers to use. If < 1, then no\
+                    multi-process is happening.
+    :type workers: int
     """
     # Make sure that the directory exists
     dir_split.mkdir(parents=True, exist_ok=True)
@@ -347,60 +353,23 @@ def create_split_data(csv_split: MutableSequence[MutableMapping[str, str]],
     captions_fields = [settings_ann['captions_fields_prefix'].format(i)
                        for i in range(1, int(settings_ann['nb_captions']) + 1)]
 
-    # For each sound:
-    for csv_entry in csv_split:
-        file_name_audio = csv_entry[settings_ann['audio_file_column']]
+    sub_f = partial(
+        _create_split_data_sub,
+        captions_fields=captions_fields,
+        dir_root=dir_root,
+        dir_split=dir_split,
+        dir_audio=dir_audio,
+        words_list=words_list,
+        chars_list=chars_list,
+        settings_output=settings_output,
+        settings_ann=settings_ann,
+        settings_audio=settings_audio)
 
-        audio = load_audio_file(
-            audio_file=str(dir_root.joinpath(dir_audio, file_name_audio)),
-            sr=int(settings_audio['sr']), mono=settings_audio['to_mono'])
-
-        for caption_ind, caption_field in enumerate(captions_fields):
-            caption = csv_entry[caption_field]
-
-            words_caption = get_sentence_words(
-                caption, unique=settings_ann['use_unique_words_per_caption'],
-                keep_case=settings_ann['keep_case'],
-                remove_punctuation=settings_ann['remove_punctuation_words'],
-                remove_specials=not settings_ann['use_special_tokens']
-            )
-
-            chars_caption = list(chain.from_iterable(
-                clean_sentence(
-                    caption,
-                    keep_case=settings_ann['keep_case'],
-                    remove_punctuation=settings_ann['remove_punctuation_chars'],
-                    remove_specials=True)))
-
-            if settings_ann['use_special_tokens']:
-                chars_caption.insert(0, ' ')
-                chars_caption.insert(0, '<sos>')
-                chars_caption.append(' ')
-                chars_caption.append('<eos>')
-
-            indices_words = [words_list.index(word) for word in words_caption]
-            indices_chars = [chars_list.index(char) for char in chars_caption]
-
-            #   create the numpy object with all elements
-            np_rec_array = np.rec.array(np.array(
-                (file_name_audio, audio, caption, caption_ind,
-                 np.array(indices_words), np.array(indices_chars)),
-                dtype=[
-                    ('file_name', 'U{}'.format(len(file_name_audio))),
-                    ('audio_data', np.dtype(object)),
-                    ('caption', 'U{}'.format(len(caption))),
-                    ('caption_ind', 'i4'),
-                    ('words_ind', np.dtype(object)),
-                    ('chars_ind', np.dtype(object))
-                ]
-            ))
-
-            #   save the numpy object to disk
-            dump_numpy_object(
-                np_obj=np_rec_array,
-                file_name=str(dir_split.joinpath(
-                    settings_output['file_name_template'].format(
-                        audio_file_name=file_name_audio, caption_index=caption_ind))))
+    if workers > 1:
+        with Pool(processes=workers) as pool:
+            pool.map(sub_f, csv_split)
+    else:
+        [sub_f(csv_entry) for csv_entry in csv_split]
 
 
 def get_annotations_files(settings_ann: MutableMapping[str, Any], dir_ann: Path) -> \
