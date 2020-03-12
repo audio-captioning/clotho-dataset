@@ -44,7 +44,8 @@ def main():
 
     if settings_dataset['workflow']['extract_features']:
         main_logger.info('Starting Clotho feature extraction')
-        extract_features(settings_dataset, settings_features)
+        extract_features(settings_dataset, settings_features,
+                         settings_dataset['workflow']['nb_workers'])
         main_logger.info('Features extracted')
 
 
