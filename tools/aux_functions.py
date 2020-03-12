@@ -35,28 +35,28 @@ def _create_split_data_sub(csv_entry: MutableMapping[str, str],
                            settings_ann: MutableMapping[str, Union[str, int, bool, MutableMapping]],
                            settings_audio: MutableMapping[str, Union[str, int, bool, MutableMapping]]) \
         -> None:
-    """
+    """Sub-function for data split creation.
 
-    :param csv_entry:
-    :type csv_entry:
-    :param captions_fields:
-    :type captions_fields:
-    :param dir_root:
-    :type dir_root:
-    :param dir_audio:
-    :type dir_audio:
-    :param dir_split:
-    :type dir_split:
-    :param words_list:
-    :type words_list:
-    :param chars_list:
-    :type chars_list:
-    :param settings_output:
-    :type settings_output:
-    :param settings_ann:
-    :type settings_ann:
-    :param settings_audio:
-    :type settings_audio:
+    :param csv_entry: CSV entry for each sound.
+    :type csv_entry: dict[str, str]
+    :param captions_fields: Names of the columns for captions.
+    :type captions_fields: list[str]
+    :param dir_root: Root directory for dataset.
+    :type dir_root: pathlib.Path
+    :param dir_audio: Directory of the audio files for the split.
+    :type dir_audio: pathlib.Path
+    :param dir_split: Directory for the split.
+    :type dir_split: pathlib.Path
+    :param words_list: List of the words.
+    :type words_list: list[str]
+    :param chars_list: List of the characters.
+    :type chars_list: list[str]
+    :param settings_output: Settings for the output files.
+    :type settings_output: dict
+    :param settings_ann: Settings for the annotations.
+    :type settings_ann: dict
+    :param settings_audio: Settings for the audio.
+    :type settings_audio: dict
     """
     f_name_audio = csv_entry[settings_ann['audio_file_column']]
 
@@ -73,8 +73,7 @@ def _create_split_data_sub(csv_entry: MutableMapping[str, str],
             unique=settings_ann['use_unique_words_per_caption'],
             keep_case=settings_ann['keep_case'],
             remove_punctuation=settings_ann['remove_punctuation_words'],
-            remove_specials=not settings_ann['use_special_tokens']
-        )
+            remove_specials=not settings_ann['use_special_tokens'])
 
         chars_caption = list(chain.from_iterable(
             clean_sentence(
