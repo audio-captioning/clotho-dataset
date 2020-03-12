@@ -115,7 +115,8 @@ def _create_split_data_sub(csv_entry: MutableMapping[str, str],
                     caption_index=caption_ind))))
 
 
-def get_amount_of_file_in_dir(the_dir: Path) -> int:
+def get_amount_of_file_in_dir(the_dir: Path) \
+        -> int:
     """Counts the amount of files in a directory.
 
     :param the_dir: Directory.
@@ -130,11 +131,14 @@ def get_amount_of_file_in_dir(the_dir: Path) -> int:
     return next(counter)
 
 
-def check_data_for_split(dir_audio: Path, dir_data: Path, dir_root: Path,
+def check_data_for_split(dir_audio: Path,
+                         dir_data: Path,
+                         dir_root: Path,
                          csv_split: MutableSequence[MutableMapping[str, str]],
                          settings_ann: MutableMapping[str, Any],
                          settings_audio: MutableMapping[str, Any],
-                         settings_cntr: MutableMapping[str, Any]) -> None:
+                         settings_cntr: MutableMapping[str, Any]) \
+        -> None:
     """Goes through all audio files and checks the created data.
 
     Gets each audio file and checks if there are associated data. If there are,\
