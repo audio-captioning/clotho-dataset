@@ -3,6 +3,8 @@
 
 from typing import Optional, Union, Dict, Any
 from pathlib import Path
+from collections import deque
+from itertools import count
 import os
 import pickle
 import yaml
@@ -16,6 +18,7 @@ __author__ = 'Konstantinos Drossos -- Tampere University'
 __docformat__ = 'reStructuredText'
 __all__ = [
     'dump_numpy_object', 'dump_pickle_file',
+    'get_amount_of_file_in_dir',
     'load_numpy_object', 'load_pickle_file',
     'load_settings_file', 'load_audio_file',
 ]
@@ -57,6 +60,22 @@ def dump_pickle_file(obj: object, file_name: Union[str, Path],
 
     with open(str_file_name, 'wb') as f:
         pickle.dump(obj, f, protocol=protocol)
+
+
+def get_amount_of_file_in_dir(the_dir: Path) \
+        -> int:
+    """Counts the amount of files in a directory.
+
+    :param the_dir: Directory.
+    :type the_dir: pathlib.Path
+    :return: Amount of files in directory.
+    :rtype: int
+    """
+    counter = count()
+
+    deque(zip(the_dir.iterdir(), counter))
+
+    return next(counter)
 
 
 def load_audio_file(audio_file: str, sr: int, mono: bool,
