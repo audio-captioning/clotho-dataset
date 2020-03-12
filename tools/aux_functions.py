@@ -254,7 +254,8 @@ def check_data_for_split(dir_audio: Path,
                          csv_split: MutableSequence[MutableMapping[str, str]],
                          settings_ann: MutableMapping[str, Any],
                          settings_audio: MutableMapping[str, Any],
-                         settings_cntr: MutableMapping[str, Any]) \
+                         settings_cntr: MutableMapping[str, Any],
+                         nb_workers: int) \
         -> None:
     """Goes through all audio files and checks the created data.
 
@@ -276,100 +277,29 @@ def check_data_for_split(dir_audio: Path,
     :type settings_audio: dict
     :param settings_cntr: Settings for counters.
     :type settings_cntr: dict
+    :param nb_workers: Amount of workers to use. If < 1, then no\
+                    multi-process is happening.
+    :type nb_workers: int
     """
     # Load the words and characters lists
     words_list = load_pickle_file(dir_root.joinpath(settings_cntr['words_list_file_name']))
     chars_list = load_pickle_file(dir_root.joinpath(settings_cntr['characters_list_file_name']))
 
-    for csv_entry in csv_split:
-        # Get audio file name
-        file_name_audio = Path(csv_entry[settings_ann['audio_file_column']])
+    sub_f = partial(
+        _check_data_for_split_sub,
+        dir_root=dir_root,
+        dir_data=dir_data,
+        dir_audio=dir_audio,
+        words_list=words_list,
+        chars_list=chars_list,
+        settings_ann=settings_ann,
+        settings_audio=settings_audio)
 
-        # Check if the audio file existed originally
-        if not dir_audio.joinpath(file_name_audio).exists():
-            raise FileExistsError('Audio file {f_name_audio} not exists in {d_audio}'.format(
-                f_name_audio=file_name_audio, d_audio=dir_audio))
-
-        # Flag for checking if there are data files for the audio file
-        audio_has_data_files = False
-
-        # Get the original audio data
-        data_audio_original = load_audio_file(
-            audio_file=str(dir_audio.joinpath(file_name_audio)),
-            sr=int(settings_audio['sr']), mono=settings_audio['to_mono'])
-
-        for data_file in dir_root.joinpath(dir_data).iterdir():
-            # Get the stem of the audio file name
-            f_stem = str(data_file).split('file_')[-1].split('.wav_')[0]
-
-            if f_stem == file_name_audio.stem:
-                audio_has_data_files = True
-                # Get the numpy record array
-                data_array = load_numpy_object(data_file)
-
-                # Get the audio data from the numpy record array
-                data_audio_rec_array = data_array['audio_data'].item()
-
-                # Compare the lengths
-                if len(data_audio_rec_array) != len(data_audio_original):
-                    raise ValueError(
-                        'File {f_audio} was not saved successfully to the numpy '
-                        'object {f_np}.'.format(f_audio=file_name_audio, f_np=data_file))
-
-                # Check all elements, one to one
-                if not all([data_audio_original[i] == data_audio_rec_array[i]
-                            for i in range(len(data_audio_original))]):
-                    raise ValueError('Numpy object {} has wrong audio data.'.format(data_file))
-
-                # Get the original caption
-                caption_index = data_array['caption_ind'].item()
-
-                # Clean it to remove any spaces before punctuation.
-                original_caption = clean_sentence(
-                    sentence=csv_entry[settings_ann['captions_fields_prefix'].format(caption_index + 1)],
-                    keep_case=True, remove_punctuation=False,
-                    remove_specials=not settings_ann['use_special_tokens'])
-
-                # Check with the file caption
-                caption_data_array = clean_sentence(
-                    sentence=data_array['caption'].item(), keep_case=True,
-                    remove_punctuation=False,
-                    remove_specials=not settings_ann['use_special_tokens'])
-
-                if not original_caption == caption_data_array:
-                    raise ValueError('Numpy object {} has wrong caption.'.format(data_file))
-
-                # Since caption in the file is OK, we can use it instead of
-                # the original, because it already has the special tokens.
-                caption_data_array = clean_sentence(
-                    sentence=data_array['caption'].item(),
-                    keep_case=settings_ann['keep_case'],
-                    remove_punctuation=settings_ann['remove_punctuation_words'],
-                    remove_specials=not settings_ann['use_special_tokens'])
-
-                # Check with the indices of words
-                words_indices = data_array['words_ind'].item()
-                caption_form_words = ' '.join([words_list[i] for i in words_indices])
-
-                if not caption_data_array == caption_form_words:
-                    raise ValueError('Numpy object {} has wrong words indices.'.format(data_file))
-
-                # Check with the indices of characters
-                caption_from_chars = ''.join([chars_list[i] for i in data_array['chars_ind'].item()])
-
-                caption_data_array = clean_sentence(
-                    sentence=data_array['caption'].item(),
-                    keep_case=settings_ann['keep_case'],
-                    remove_punctuation=settings_ann['remove_punctuation_chars'],
-                    remove_specials=not settings_ann['use_special_tokens'])
-
-                if not caption_data_array == caption_from_chars:
-                    raise ValueError('Numpy object {} has wrong characters '
-                                     'indices.'.format(data_file))
-
-        if not audio_has_data_files:
-            raise FileExistsError('Audio file {} has no associated data.'.format(
-                file_name_audio))
+    if nb_workers > 1:
+        with Pool(processes=nb_workers) as pool:
+            pool.map(sub_f, csv_split)
+    else:
+        [sub_f(csv_entry) for csv_entry in csv_split]
 
 
 def create_lists_and_frequencies(captions: MutableSequence[str],
@@ -442,7 +372,7 @@ def create_split_data(csv_split: MutableSequence[MutableMapping[str, str]],
                       settings_ann: MutableMapping[str, Any],
                       settings_audio: MutableMapping[str, Any],
                       settings_output: MutableMapping[str, Any],
-                      workers: int) \
+                      nb_workers: int) \
         -> None:
     """Creates the data for the split.
 
@@ -464,9 +394,9 @@ def create_split_data(csv_split: MutableSequence[MutableMapping[str, str]],
     :type settings_audio: dict
     :param settings_output: Settings for the output files.
     :type settings_output: dict
-    :param workers: Amount of workers to use. If < 1, then no\
+    :param nb_workers: Amount of workers to use. If < 1, then no\
                     multi-process is happening.
-    :type workers: int
+    :type nb_workers: int
     """
     # Make sure that the directory exists
     dir_split.mkdir(parents=True, exist_ok=True)
@@ -486,8 +416,8 @@ def create_split_data(csv_split: MutableSequence[MutableMapping[str, str]],
         settings_ann=settings_ann,
         settings_audio=settings_audio)
 
-    if workers > 1:
-        with Pool(processes=workers) as pool:
+    if nb_workers > 1:
+        with Pool(processes=nb_workers) as pool:
             pool.map(sub_f, csv_split)
     else:
         [sub_f(csv_entry) for csv_entry in csv_split]
