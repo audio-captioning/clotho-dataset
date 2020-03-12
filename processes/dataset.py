@@ -10,10 +10,11 @@ from functools import partial
 from loguru import logger
 
 from tools.argument_parsing import get_argument_parser
-from tools.aux_functions import get_annotations_files, \
-    get_amount_of_file_in_dir, check_data_for_split, \
-    create_split_data, create_lists_and_frequencies
-from tools.file_io import load_settings_file
+from tools.dataset_functions import get_annotations_files, \
+    check_data_for_split, create_split_data, \
+    create_lists_and_frequencies
+from tools.file_io import load_settings_file, \
+    get_amount_of_file_in_dir
 
 __author__ = 'Konstantinos Drossos -- Tampere University'
 __docformat__ = 'reStructuredText'
@@ -146,9 +147,5 @@ def main():
     main_logger.info('Starting Clotho dataset creation')
     create_dataset(settings)
     main_logger.info('Dataset created')
-
-
-if __name__ == '__main__':
-    main()
 
 # EOF
