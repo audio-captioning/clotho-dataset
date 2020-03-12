@@ -68,7 +68,8 @@ def create_dataset(settings: MutableMapping[str, Any]) -> None:
         words_list=words_list, chars_list=chars_list,
         settings_ann=settings['annotations'],
         settings_audio=settings['audio'],
-        settings_output=settings['output_files'])
+        settings_output=settings['output_files'],
+        nb_workers=settings['workflow']['nb_workers'])
 
     # For each data split (i.e. development and evaluation)
     for split_data in [(csv_dev, 'development'), (csv_eva, 'evaluation')]:
@@ -112,7 +113,8 @@ def create_dataset(settings: MutableMapping[str, Any]) -> None:
             dir_root=dir_root, csv_split=split_csv,
             settings_ann=settings['annotations'],
             settings_audio=settings['audio'],
-            settings_cntr=settings['counters'])
+            settings_cntr=settings['counters'],
+            nb_workers=settings['workflow']['nb_workers'])
         inner_logger.info('Done')
 
 
